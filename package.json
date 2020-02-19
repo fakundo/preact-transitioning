@@ -1,0 +1,62 @@
+{
+  "name": "preact-transitioning",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "dev": "webpack-dev-server --progress --open --config webpack.config.development.js",
+    "docs": "webpack --progress --config webpack.config.docs.js",
+    "lint": "eslint src && eslint examples",
+    "clean": "rimraf lib",
+    "compile": "microbundle -i src -o lib/index.js -f cjs --no-sourcemap",
+    "build": "yarn run clean && yarn run compile",
+    "prepublishOnly": "yarn run lint && yarn run build"
+  },
+  "keywords": [
+    "preact",
+    "transition",
+    "animation",
+    "react-transition-group",
+    "preact-transition-group"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fakundo/preact-transitioning"
+  },
+  "author": "Roman Samoylov (https://github.com/fakundo)",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/preset-react": "^7.8.3",
+    "babel-eslint": "^10.0.3",
+    "babel-loader": "^8.0.6",
+    "clean-webpack-plugin": "^3.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "html-webpack-plugin": "^3.2.0",
+    "microbundle": "^0.11.0",
+    "preact": "^10.0.5",
+    "rimraf": "^3.0.2",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
+  },
+  "dependencies": {
+    "classnames": "^2.2.6"
+  },
+  "peerDependencies": {
+    "preact": "^10.0.0"
+  }
+}
