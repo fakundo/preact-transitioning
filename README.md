@@ -99,3 +99,7 @@ import { Transition, CSSTransition, TransitionGroup } from 'preact-transitioning
 - `enter = true`
 - `exit = true`
 - `duration = 500`
+
+## License
+
+MIT
