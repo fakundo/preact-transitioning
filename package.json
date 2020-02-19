@@ -1,7 +1,7 @@
 {
   "name": "preact-transitioning",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "Preact components for easily implementing basic CSS animations and transitions",
   "main": "lib/index.js",
   "files": [
     "lib"
