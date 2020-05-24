@@ -1,83 +1,96 @@
-/* eslint-disable no-param-reassign */
 import { cloneElement } from 'preact'
-import { useRef, useLayoutEffect } from 'preact/hooks'
+import { useRef } from 'preact/hooks'
 
-const IGNORE_KEY = 'preact-transition-group-ignore'
-const EXIT_TIMEOUT_KEY = 'preact-transition-group-exit-timeout'
+const getChildProp = (child, propName, defaultValue) => {
+  const { [propName]: prop = defaultValue } = child.props
+  return prop
+}
 
-const updateVisibleChildren = (
-  visibleChildrenRef, isFirstRenderRef, children,
-  { appear = false, enter = true, exit = true, duration = 500 } = {},
-) => {
-  const { current: isFirstRender } = isFirstRenderRef
-  const { current: visibleChildren } = visibleChildrenRef
+export default ({ children, appear = false, enter = true, exit = true, duration = 500 }) => {
+  const derivedChildren = Array.isArray(children) ? children : [children]
+  const firstRenderRef = useRef(true)
+  const prevVisibleChildrenRef = useRef([])
   const nextVisibleChildren = []
+  const nextChildrenKeys = {}
+  const nextChildren = []
 
-  const createVisibleChild = (child, exitTimeout = null) => {
-    const clone = cloneElement(child, {
+  const addVisibleChild = (child, removeTimeout) => {
+    // No child to add
+    if (!child) {
+      return
+    }
+
+    // Create child clone with new props
+    const visibleChild = cloneElement(child, {
       enter,
       exit,
       duration,
       ...child.props,
-      in: !exitTimeout,
-      appear: (isFirstRender && appear && child.props.appear !== false)
-        || (!isFirstRender && enter && child.props.enter !== false),
+      in: !removeTimeout,
+      appear: firstRenderRef.current
+        ? getChildProp(child, 'appear', appear)
+        : getChildProp(child, 'enter', enter),
     })
-    clone[EXIT_TIMEOUT_KEY] = exitTimeout
-    nextVisibleChildren.push(clone)
+
+    // Save child clone and timeout
+    nextVisibleChildren.push({ visibleChild, removeTimeout })
+    nextChildrenKeys[child.key] = true
+    nextChildren.push(visibleChild)
   }
 
-  visibleChildren.forEach((visibleChild) => {
+  const makeRemoveTimeout = (child) => (
+    setTimeout(() => {
+      const { current: prevVisibleChildren } = prevVisibleChildrenRef
+      const indexToDelete = prevVisibleChildren.findIndex(({ visibleChild }) => (
+        visibleChild.key === child.key
+      ))
+      if (indexToDelete > -1) {
+        prevVisibleChildren.splice(indexToDelete, 1)
+      }
+    }, getChildProp(child, 'duration', duration))
+  )
+
+  let lastAddedChildIndex = 0
+
+  // Check previous visible children first
+  prevVisibleChildrenRef.current.forEach(({ visibleChild, removeTimeout }) => {
+    // Key is required for proper work
     const { key } = visibleChild
-    // Search visible child in derived children list
-    const childIndex = children.findIndex((child) => (
-      child.key === key && !child[IGNORE_KEY]
-    ))
-    if (childIndex < 0) {
-      // Visible children not found in derived children list
-      if (visibleChild[EXIT_TIMEOUT_KEY]) {
-        // If child is already exiting then just copy it
-        createVisibleChild(visibleChild, visibleChild[EXIT_TIMEOUT_KEY])
-      } else if (exit && visibleChild.props.exit !== false) {
-        // Create new exiting timeout if needed
-        createVisibleChild(visibleChild, setTimeout(() => {
-          const indexToDelete = visibleChildrenRef.current.findIndex((v) => v.key === key)
-          if (indexToDelete >= 0) {
-            visibleChildrenRef.current.splice(indexToDelete, 1)
-          }
-        }, visibleChild.props.duration || duration))
-      }
-    } else {
-      // Visible child found in derived children list, so remove exiting timeout if it exist
-      if (visibleChild[EXIT_TIMEOUT_KEY]) {
-        clearTimeout(visibleChild[EXIT_TIMEOUT_KEY])
-      }
-      // Add previous children
-      for (let i = 0; i <= childIndex; i++) {
-        const child = children[i]
-        if (child && !child[IGNORE_KEY]) {
-          child[IGNORE_KEY] = true
-          createVisibleChild(child)
+    // Search visible child in derived children
+    const foundIndex = derivedChildren.findIndex((child) => child.key === key)
+    // Visible child not found, start to remove it
+    if (foundIndex < 0) {
+      // Visible child already has remove timeout what means child exiting atm
+      if (removeTimeout) {
+        addVisibleChild(visibleChild, removeTimeout)
+      } else {
+        // Start remove timeout but render this child
+        const shouldAddTimeout = exit && visibleChild.props.exit !== false
+        if (shouldAddTimeout) {
+          addVisibleChild(visibleChild, makeRemoveTimeout(visibleChild))
         }
       }
+    } else {
+      // Visible child found in derived children, remove exiting timeout if it exist
+      if (removeTimeout) {
+        clearTimeout(removeTimeout)
+      }
+      // Add this child and all previous children
+      for (let i = lastAddedChildIndex; i <= foundIndex; i++) {
+        addVisibleChild(derivedChildren[i], null)
+      }
     }
+    // Save index to loop only through the remaining children
+    lastAddedChildIndex = Math.max(lastAddedChildIndex, foundIndex + 1)
   })
 
   // Add remaining children
-  children.forEach((child) => {
-    if (child && !child[IGNORE_KEY]) {
-      createVisibleChild(child)
-    }
-  })
+  for (let i = lastAddedChildIndex; i < derivedChildren.length; i++) {
+    addVisibleChild(derivedChildren[i], null)
+  }
 
-  visibleChildrenRef.current = nextVisibleChildren
-  return nextVisibleChildren
-}
-
-export default (props) => {
-  const children = Array.isArray(props.children) ? props.children : [props.children]
-  const visibleChildrenRef = useRef(children)
-  const isFirstRenderRef = useRef(true)
-  useLayoutEffect(() => { isFirstRenderRef.current = false }, [])
-  return updateVisibleChildren(visibleChildrenRef, isFirstRenderRef, children, props)
+  // Save visible children
+  prevVisibleChildrenRef.current = nextVisibleChildren
+  firstRenderRef.current = false
+  return nextChildren
 }

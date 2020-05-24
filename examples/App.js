@@ -1,20 +1,21 @@
 /** @jsx h */
 import { h, Fragment } from 'preact'
-import { useState, useCallback } from 'preact/hooks'
+import { useState } from 'preact/hooks'
 import { Transition, CSSTransition, TransitionGroup } from '../src'
 
 const colorItems = ['orange', 'purple', 'blue', 'red']
-const duration = 200
+const duration = 500
 
 export default () => {
   const [groupItems, setGroupsItems] = useState([Math.random()])
   const [visible, setVisibility] = useState(true)
-  const toggleVisibility = useCallback(() => setVisibility((oldVisible) => !oldVisible))
-  const addGroupItem = useCallback(() => setGroupsItems((oldGroupItems) => ([...oldGroupItems, Math.random()]))) // eslint-disable-line
-  const removeGroupItem = useCallback(() => setGroupsItems(([, ...oldGroupItems]) => oldGroupItems))
+  const toggleVisibility = () => setVisibility((oldVisible) => !oldVisible)
+  const addGroupItem = () => setGroupsItems((oldGroupItems) => ([...oldGroupItems, Math.random()]))
+  const removeFirstGroupItem = () => setGroupsItems(([, ...nextGroupItems]) => nextGroupItems)
+  const removeGroupItem = (index) => setGroupsItems((oldGroupItems) => ([...oldGroupItems.slice(0, index), ...oldGroupItems.slice(index + 1)])) // eslint-disable-line
   const [colorItem, setColorItem] = useState(0)
-  const switchPrevColorItem = useCallback(() => setColorItem((prevColorItem) => Math.max(0, prevColorItem - 1))) // eslint-disable-line
-  const switchNextColorItem = useCallback(() => setColorItem((prevColorItem) => Math.min(colorItems.length - 1, prevColorItem + 1))) // eslint-disable-line
+  const switchPrevColorItem = () => setColorItem((prevColorItem) => Math.max(0, prevColorItem - 1))
+  const switchNextColorItem = () => setColorItem((prevColorItem) => Math.min(colorItems.length - 1, prevColorItem + 1)) // eslint-disable-line
   return (
     <Fragment>
       <style>
@@ -69,7 +70,7 @@ export default () => {
         <div className="container">
           <button onClick={addGroupItem} type="button">Add item</button>
           {' '}
-          <button onClick={removeGroupItem} type="button">Remove first item</button>
+          <button onClick={removeFirstGroupItem} type="button">Remove first item</button>
 
           <hr />
 
@@ -79,7 +80,10 @@ export default () => {
                 key={groupItem}
                 classNames="fade"
               >
-                <div className="fade">
+                <div // eslint-disable-line
+                  className="fade"
+                  onClick={() => removeGroupItem(index)}
+                >
                   { `#${index} - ${groupItem}` }
                 </div>
               </CSSTransition>

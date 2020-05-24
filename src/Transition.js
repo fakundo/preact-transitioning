@@ -11,8 +11,8 @@ const EXITING = 'EXITING'
 const EXITED = 'EXITED'
 
 export default ({
-  in: inProp = false, appear = false, enter = true, exit = true,
-  alwaysMounted = false, children, duration = 500,
+  in: inProp = false, appear = false, enter = true, exit = true, duration = 500,
+  children, alwaysMounted = false,
   onEnter = () => {}, onEntering = () => {}, onEntered = () => {},
   onExit = () => {}, onExiting = () => {}, onExited = () => {},
 }) => {
