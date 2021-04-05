@@ -1,7 +1,9 @@
 /** @jsx h */
 import { h, Fragment } from 'preact'
 import { useState } from 'preact/hooks'
-import { Transition, CSSTransition, TransitionGroup } from '../src'
+import { Transition, TransitionGroup } from '../src'
+import CSSTransition from '../src/CSSTransition'
+import StyleTransition from '../src/StyleTransition'
 
 const colorItems = ['orange', 'purple', 'blue', 'red']
 const duration = 500
@@ -21,7 +23,7 @@ export default () => {
       <style>
         {'.root { margin: auto; width: 400px; max-width: 100%; font: 14px/1.4 monospace; } .root pre { font: inherit; }'}
         {'.container { background: beige; padding: 20px; margin: 20px; border-radius: 20px; }'}
-        {`.fade { background: seagreen; padding: 5px 10px; color: #fff; margin: 2px; transition: all ${duration}ms; border-radius: 5px; }`}
+        {`.item { background: seagreen; padding: 5px 10px; color: #fff; margin: 2px; transition: all ${duration}ms; border-radius: 5px; }`}
         {'.fade-appear { opacity: 0 }'}
         {'.fade-appear-active { opacity: 1 }'}
         {'.fade-appear-done { opacity: 1 }'}
@@ -45,12 +47,12 @@ export default () => {
             duration={duration}
             alwaysMounted
           >
-            { (props) => (
+            {(props) => (
               <div>
                 <h5>Transition state</h5>
-                <pre>{ JSON.stringify(props, null, ' ') }</pre>
+                <pre>{JSON.stringify(props, null, ' ')}</pre>
               </div>
-            ) }
+            )}
           </Transition>
 
           <hr />
@@ -61,10 +63,30 @@ export default () => {
             duration={duration}
             classNames="fade"
           >
-            <div className="fade">
-              Visible
+            <div className="item">
+              Visible [using class name]
             </div>
           </CSSTransition>
+
+          <hr />
+
+          <StyleTransition
+            in={visible}
+            appear
+            duration={duration}
+            styles={{
+              enter: { opacity: 0 },
+              enterActive: { opacity: 1 },
+              appear: { opacity: 0 },
+              appearActive: { opacity: 1 },
+              exit: { opacity: 1 },
+              exitActive: { opacity: 0 },
+            }}
+          >
+            <div className="item">
+              Visible [using inline style]
+            </div>
+          </StyleTransition>
         </div>
 
         <div className="container">
@@ -75,19 +97,19 @@ export default () => {
           <hr />
 
           <TransitionGroup duration={duration}>
-            { groupItems.map((groupItem, index) => (
+            {groupItems.map((groupItem, index) => (
               <CSSTransition
                 key={groupItem}
                 classNames="fade"
               >
                 <div // eslint-disable-line
-                  className="fade"
+                  className="item"
                   onClick={() => removeGroupItem(index)}
                 >
-                  { `#${index} - ${groupItem}` }
+                  {`#${index} - ${groupItem}`}
                 </div>
               </CSSTransition>
-            )) }
+            ))}
           </TransitionGroup>
         </div>
 
@@ -103,8 +125,8 @@ export default () => {
               key={colorItem}
               classNames="fade"
             >
-              <div className="fade" style={{ background: colorItems[colorItem], display: 'inline-block', width: 100, textAlign: 'center' }}>
-                { colorItems[colorItem] }
+              <div className="item" style={{ background: colorItems[colorItem], display: 'inline-block', width: 100, textAlign: 'center' }}>
+                {colorItems[colorItem]}
               </div>
             </CSSTransition>
           </TransitionGroup>

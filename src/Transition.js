@@ -1,4 +1,6 @@
-import { useState, useEffect, useLayoutEffect, useRef } from 'preact/hooks'
+import { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'preact/hooks'
+
+const noop = () => { }
 
 const APPEAR = 'APPEAR'
 const APPEARING = 'APPEARING'
@@ -11,12 +13,12 @@ const EXITING = 'EXITING'
 const EXITED = 'EXITED'
 
 export default ({
-  in: inProp = false, appear = false, enter = true, exit = true, duration = 500,
-  children, alwaysMounted = false,
-  onEnter = () => {}, onEntering = () => {}, onEntered = () => {},
-  onExit = () => {}, onExiting = () => {}, onExited = () => {},
+  in: inProp = false, appear = false, enter = true, exit = true,
+  duration = 500, alwaysMounted = false, children,
+  onEnter = noop, onEntering = noop, onEntered = noop,
+  onExit = noop, onExiting = noop, onExited = noop,
 }) => {
-  const timeoutRef = useRef(() => setTimeout(() => {}))
+  const timeoutRef = useRef(() => setTimeout(noop))
   let ignoreInPropChange = false
 
   const [phase, setPhase] = useState(() => {
@@ -92,7 +94,7 @@ export default ({
     }
   }, [inProp])
 
-  return (alwaysMounted || phase !== EXITED) && children({
+  const value = useMemo(() => ({
     appear: phase === APPEAR,
     appearActive: phase === APPEARING,
     appearDone: phase === APPEARED,
@@ -102,5 +104,7 @@ export default ({
     exit: phase === EXIT,
     exitActive: phase === EXITING,
     exitDone: phase === EXITED,
-  })
+  }), [phase])
+
+  return (alwaysMounted || phase !== EXITED) && children(value)
 }

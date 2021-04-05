@@ -1,14 +1,14 @@
 /** @jsx h */
 import { h, cloneElement } from 'preact'
-import classnames from 'classnames'
+import { useMemo } from 'preact/hooks'
 import Transition from './Transition'
 
-const createClassName = (transitionProps, classNames) => {
+const createClassName = (transition, classNames) => {
   const {
     appear, appearActive, appearDone,
     enter, enterActive, enterDone,
     exit, exitActive, exitDone,
-  } = transitionProps
+  } = transition
 
   const classes = typeof classNames === 'string'
     ? {
@@ -24,28 +24,40 @@ const createClassName = (transitionProps, classNames) => {
     }
     : classNames
 
-  return classnames({
-    [classes.appear]: appear || appearActive,
-    [classes.appearActive]: appearActive,
-    [classes.appearDone]: appearDone,
-    [classes.enter]: enter || enterActive,
-    [classes.enterActive]: enterActive,
-    [classes.enterDone]: enterDone || appearDone,
-    [classes.exit]: exit || exitActive,
-    [classes.exitActive]: exitActive,
-    [classes.exitDone]: exitDone,
-  })
+  switch (true) {
+    case appear:
+      return classes.appear
+    case appearActive:
+      return `${classes.appear} ${classes.appearActive}`
+    case appearDone:
+      return classes.appearDone
+    case enter:
+      return classes.enter
+    case enterActive:
+      return `${classes.enter} ${classes.enterActive}`
+    case enterDone:
+      return classes.enterDone
+    case exit:
+      return classes.exit
+    case exitActive:
+      return `${classes.exit} ${classes.exitActive}`
+    case exitDone:
+      return classes.exitDone
+    default:
+      return ''
+  }
 }
 
 export default ({ classNames, children, ...rest }) => (
   <Transition {...rest}>
-    { (transitionProps) => (
-      cloneElement(children, {
-        className: classnames(
-          createClassName(transitionProps, classNames),
-          children.props.className,
-        ),
-      })
-    ) }
+    {(transition) => {
+      const { className: childClassName } = children.props
+
+      const className = useMemo(() => (
+        `${childClassName ? `${childClassName} ` : ''}${createClassName(transition, classNames)}`
+      ), [childClassName, classNames, transition])
+
+      return cloneElement(children, { className })
+    }}
   </Transition>
 )

@@ -4,8 +4,7 @@
 
 Exposes Preact components for easily implementing basic CSS animations and transitions.
 
-Inspired by [`react-transition-group`](https://reactcommunity.org/react-transition-group/) and has almost the same API. Take a look how it works.
-
+Lightweight, fast and has no dependencies. Inspired by [`react-transition-group`](https://reactcommunity.org/react-transition-group/) and has almost the same API. Take a look how it works.
 
 ## Installation
   
@@ -21,8 +20,8 @@ npm i preact-transitioning
 
 ## Usage
 
-```javascript
-import { Transition, CSSTransition, TransitionGroup } from 'preact-transitioning'
+```js
+import { Transition } from 'preact-transitioning'
 
 ...
 
@@ -36,6 +35,10 @@ import { Transition, CSSTransition, TransitionGroup } from 'preact-transitioning
     <pre>{ JSON.stringify(transitionState) }</pre>
   ) }
 </Transition>
+```
+
+```js
+import { CSSTransition } from 'preact-transitioning'
 
 ...
 
@@ -49,6 +52,30 @@ import { Transition, CSSTransition, TransitionGroup } from 'preact-transitioning
     Animated
   </div>
 </CSSTransition>
+```
+
+```js
+import { StyleTransition } from 'preact-transitioning'
+
+...
+
+<StyleTransition
+  in
+  appear
+  duration={800}
+  styles={{
+    appear: { opacity: 0 },
+    appearActive: { opacity: 1 },
+  }}
+>
+  <div style={{ transition: 'opacity 800ms' }}>
+    Animated
+  </div>
+</StyleTransition>
+```
+
+```js
+import { TransitionGroup } from 'preact-transitioning'
 
 ...
 
@@ -64,8 +91,6 @@ import { Transition, CSSTransition, TransitionGroup } from 'preact-transitioning
     </CSSTransition>
   )) }
 </TransitionGroup>
-
-...
 ```
 
 ## API
@@ -90,6 +115,12 @@ import { Transition, CSSTransition, TransitionGroup } from 'preact-transitioning
 
 - `children`
 - `classNames`
+- `...transitionProps`
+
+#### `StyleTransition` props
+
+- `children`
+- `styles`
 - `...transitionProps`
 
 #### `TransitionGroup` props
