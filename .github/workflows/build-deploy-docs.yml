@@ -1,4 +1,4 @@
-name: Build Docs
+name: Build docs
 on:
   push:
     branches:
@@ -10,7 +10,7 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v2.3.1
 
-      - name: Install and Build Docs 🔧
+      - name: Install and build docs 🔧
         run: |
           yarn
           yarn run lint
