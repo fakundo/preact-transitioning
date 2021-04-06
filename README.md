@@ -95,7 +95,7 @@ import { TransitionGroup } from 'preact-transitioning'
 
 ## API
 
-#### `Transition` props
+### `Transition` props
 
 - `children(transitionState)`
 - `in = false`
@@ -111,19 +111,67 @@ import { TransitionGroup } from 'preact-transitioning'
 - `onExiting()`
 - `onExited()`
 
-#### `CSSTransition` props
+`transitionState` passed to the child function has the following structure
+
+```js
+{
+  appear: true|false,
+  appearActive: true|false,
+  appearDone: true|false,
+  enter: true|false,
+  enterActive: true|false,
+  enterDone: true|false,
+  exit: true|false,
+  exitActive: true|false,
+  exitDone: true|false,
+}
+```
+
+### `CSSTransition` props
 
 - `children`
 - `classNames`
 - `...transitionProps`
 
-#### `StyleTransition` props
+`classNames` must be `string` or `object` with the following structure
+
+```js
+{
+  appear: '...',        // appear className
+  appearActive: '...',  // appear active className
+  appearDone: '...',    // appear done className
+  enter: '...',
+  enterActive: '...',
+  enterDone: '...',
+  exit: '...',
+  exitActive: '...',
+  exitDone: '...',
+}
+```
+
+### `StyleTransition` props
 
 - `children`
 - `styles`
 - `...transitionProps`
 
-#### `TransitionGroup` props
+#### `styles` must be `object` with shape
+
+```js
+{
+  appear: { ... },        // appear styles
+  appearActive: { ... },  // appear active styles
+  appearDone: { ... },    // appear done styles
+  enter: { ... },
+  enterActive: { ... },
+  enterDone: { ... },
+  exit: { ... },
+  exitActive: { ... },
+  exitDone: { ... },
+}
+```
+
+### `TransitionGroup` props
 
 - `children`
 - `appear = false`
