@@ -155,7 +155,7 @@ import { TransitionGroup } from 'preact-transitioning'
 - `styles`
 - `...transitionProps`
 
-#### `styles` must be `object` with shape
+`styles` must be `object` with shape
 
 ```js
 {
