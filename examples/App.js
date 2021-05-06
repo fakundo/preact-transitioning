@@ -1,9 +1,7 @@
 /** @jsx h */
 import { h, Fragment } from 'preact'
 import { useState } from 'preact/hooks'
-import { Transition, TransitionGroup } from '../src'
-import CSSTransition from '../src/CSSTransition'
-import StyleTransition from '../src/StyleTransition'
+import { Transition, TransitionGroup, CSSTransition, StyleTransition } from 'preact-transitioning'
 
 const colorItems = ['orange', 'purple', 'blue', 'red']
 const duration = 500

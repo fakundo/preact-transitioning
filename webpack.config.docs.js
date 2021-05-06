@@ -10,6 +10,7 @@ module.exports = {
     publicPath: '',
   },
   target: 'web',
+  mode: 'production',
   devtool: 'source-map',
   stats: 'errors-only',
   plugins: [
@@ -24,5 +25,10 @@ module.exports = {
         exclude: /node_modules/,
       },
     ],
+  },
+  resolve: {
+    alias: {
+      'preact-transitioning': path.resolve(__dirname),
+    },
   },
 }

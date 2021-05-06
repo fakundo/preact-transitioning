@@ -22,10 +22,16 @@ module.exports = {
       },
     ],
   },
+  resolve: {
+    alias: {
+      'preact-transitioning': path.resolve(__dirname),
+    },
+  },
   devServer: {
     host,
     port,
-    stats: 'minimal',
+    open: true,
+    stats: 'errors-only',
     historyApiFallback: true,
   },
 }

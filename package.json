@@ -1,18 +1,21 @@
 {
   "name": "preact-transitioning",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Preact components for easily implementing basic CSS animations and transitions",
-  "main": "lib/index.js",
+  "main": "lib/preact-transitioning.js",
+  "module": "lib/preact-transitioning.module.js",
+  "exports": "./lib/preact-transitioning.modern.js",
   "files": [
     "lib"
   ],
   "scripts": {
-    "dev": "webpack-dev-server --progress --open --config webpack.config.development.js",
-    "docs": "webpack --progress --config webpack.config.docs.js",
+    "dev": "webpack serve --progress --config webpack.config.development.js",
+    "docs": "yarn run build && webpack --progress --config webpack.config.docs.js",
     "lint": "eslint src && eslint examples",
     "clean": "rimraf lib",
-    "compile": "microbundle -i src -o lib/index.js -f cjs --no-sourcemap",
-    "build": "yarn run clean && yarn run compile",
+    "watch": "microbundle watch -i src -o lib -f modern,es,cjs --no-sourcemap",
+    "compile": "microbundle -i src -o lib -f modern,es,cjs --no-sourcemap",
+    "build": "npm run clean && npm run compile",
     "prepublishOnly": "yarn run lint && yarn run build"
   },
   "keywords": [
@@ -32,29 +35,29 @@
   "author": "Roman Samoylov (https://github.com/fakundo)",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.8.4",
-    "@babel/preset-env": "^7.8.4",
-    "@babel/preset-react": "^7.8.3",
-    "babel-eslint": "^10.0.3",
-    "babel-loader": "^8.0.6",
+    "@babel/cli": "^7.13.16",
+    "@babel/core": "^7.14.0",
+    "@babel/eslint-parser": "^7.13.14",
+    "@babel/preset-env": "^7.14.1",
+    "@babel/preset-react": "^7.13.13",
+    "babel-loader": "^8.2.2",
     "clean-webpack-plugin": "^3.0.0",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb": "^18.0.1",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-react-hooks": "^1.7.0",
-    "html-webpack-plugin": "^3.2.0",
-    "microbundle": "^0.11.0",
+    "eslint": "^7.25.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.23.2",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "html-webpack-plugin": "^5.3.1",
+    "microbundle": "^0.13.0",
     "preact": "^10.0.5",
     "rimraf": "^3.0.2",
-    "webpack": "^4.41.6",
-    "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack": "^5.36.2",
+    "webpack-cli": "^4.7.0",
+    "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {},
   "peerDependencies": {
-    "preact": "^10.0.0"
+    "preact": "^10.5.13"
   }
 }
