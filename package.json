@@ -15,7 +15,7 @@
     "clean": "rimraf lib",
     "watch": "microbundle watch -i src -o lib -f modern,es,cjs --no-sourcemap",
     "compile": "microbundle -i src -o lib -f modern,es,cjs --no-sourcemap",
-    "build": "npm run clean && npm run compile",
+    "build": "yarn run clean && yarn run compile",
     "prepublishOnly": "yarn run lint && yarn run build"
   },
   "keywords": [
