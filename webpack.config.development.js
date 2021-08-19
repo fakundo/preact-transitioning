@@ -5,10 +5,8 @@ const host = 'localhost'
 const port = 3000
 
 module.exports = {
-  entry: [
-    `webpack-dev-server/client?http://${host}:${port}`,
-    path.resolve(__dirname, 'examples/index'),
-  ],
+  entry: path.resolve(__dirname, 'examples/index.tsx'),
+  mode: 'development',
   devtool: 'inline-source-map',
   plugins: [
     new HtmlWebpackPlugin(),
@@ -16,13 +14,14 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
-        use: 'babel-loader',
+        test: /\.tsx$/,
+        use: 'ts-loader',
         exclude: /node_modules/,
       },
     ],
   },
   resolve: {
+    extensions: ['.tsx', '.js'],
     alias: {
       'preact-transitioning': path.resolve(__dirname),
     },
@@ -31,7 +30,5 @@ module.exports = {
     host,
     port,
     open: true,
-    stats: 'errors-only',
-    historyApiFallback: true,
   },
 }

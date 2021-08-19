@@ -20,13 +20,14 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
-        use: 'babel-loader',
+        test: /\.tsx$/,
+        use: 'ts-loader',
         exclude: /node_modules/,
       },
     ],
   },
   resolve: {
+    extensions: ['.tsx', '.js'],
     alias: {
       'preact-transitioning': path.resolve(__dirname),
     },

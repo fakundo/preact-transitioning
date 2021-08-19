@@ -1,18 +1,28 @@
-import { cloneElement } from 'preact'
+import { cloneElement, VNode } from 'preact'
 import { useRef } from 'preact/hooks'
+
+interface TransitionGroupProps {
+  children: any,
+  appear?: boolean,
+  enter?: boolean,
+  exit?: boolean,
+  duration?: number,
+}
 
 const getChildProp = (child, propName, defaultValue) => {
   const { [propName]: prop = defaultValue } = child.props
   return prop
 }
 
-export default ({ children, appear = false, enter = true, exit = true, duration = 500 }) => {
+export default (props: TransitionGroupProps): VNode<any> => {
+  const { children, appear = false, enter = true, exit = true, duration = 500 } = props
+
   const derivedChildren = Array.isArray(children) ? children : [children]
   const firstRenderRef = useRef(true)
   const prevVisibleChildrenRef = useRef([])
   const nextVisibleChildren = []
   const nextChildrenKeys = {}
-  const nextChildren = []
+  const nextChildren: any = []
 
   const addVisibleChild = (child, removeTimeout) => {
     // No child to add

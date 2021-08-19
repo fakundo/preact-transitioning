@@ -1,5 +1,3 @@
-/** @jsx h */
-import { h, Fragment } from 'preact'
 import { useState } from 'preact/hooks'
 import { Transition, TransitionGroup, CSSTransition, StyleTransition } from 'preact-transitioning'
 
@@ -17,7 +15,7 @@ export default () => {
   const switchPrevColorItem = () => setColorItem((prevColorItem) => Math.max(0, prevColorItem - 1))
   const switchNextColorItem = () => setColorItem((prevColorItem) => Math.min(colorItems.length - 1, prevColorItem + 1)) // eslint-disable-line
   return (
-    <Fragment>
+    <>
       <style>
         {'.root { margin: auto; width: 400px; max-width: 100%; font: 14px/1.4 monospace; } .root pre { font: inherit; }'}
         {'.container { background: beige; padding: 20px; margin: 20px; border-radius: 20px; }'}
@@ -45,10 +43,10 @@ export default () => {
             duration={duration}
             alwaysMounted
           >
-            {(props) => (
+            {(transitionState) => (
               <div>
                 <h5>Transition state</h5>
-                <pre>{JSON.stringify(props, null, ' ')}</pre>
+                <pre>{JSON.stringify(transitionState, null, ' ')}</pre>
               </div>
             )}
           </Transition>
@@ -130,6 +128,6 @@ export default () => {
           </TransitionGroup>
         </div>
       </div>
-    </Fragment>
+    </>
   )
 }
