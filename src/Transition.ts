@@ -1,163 +1,112 @@
 import { VNode } from 'preact'
 import { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'preact/hooks'
 
-export interface TransitionState {
-  appear: boolean
-  appearActive: boolean
-  appearDone: boolean
-  enter: boolean
-  enterActive: boolean
-  enterDone: boolean
-  exit: boolean
-  exitActive: boolean
-  exitDone: boolean
+export enum Phase {
+  APPEAR = 'appear',
+  APPEAR_ACTIVE = 'appearActive',
+  APPEAR_DONE = 'appearDone',
+  ENTER = 'enter',
+  ENTER_ACTIVE = 'enterActive',
+  ENTER_DONE = 'enterDone',
+  EXIT = 'exit',
+  EXIT_ACTIVE = 'exitActive',
+  EXIT_DONE = 'exitDone',
 }
 
-export interface TransitionProps {
-  children: (transitionState: TransitionState) => any
+enum PhaseEvent {
+  ENTER = 'onEnter',
+  ENTERING = 'onEntering',
+  ENTERED = 'onEntered',
+  EXIT = 'onExit',
+  EXITING = 'onExiting',
+  EXITED = 'onExited',
+}
+
+const EventMapping: {
+  [key in Phase]: [PhaseEvent, Phase?, boolean?]
+} = {
+  [Phase.APPEAR]: [PhaseEvent.ENTER, Phase.APPEAR_ACTIVE],
+  [Phase.APPEAR_ACTIVE]: [PhaseEvent.ENTERING, Phase.APPEAR_DONE, true],
+  [Phase.APPEAR_DONE]: [PhaseEvent.ENTERED],
+  [Phase.ENTER]: [PhaseEvent.ENTER, Phase.ENTER_ACTIVE],
+  [Phase.ENTER_ACTIVE]: [PhaseEvent.ENTERING, Phase.ENTER_DONE, true],
+  [Phase.ENTER_DONE]: [PhaseEvent.ENTERED],
+  [Phase.EXIT]: [PhaseEvent.EXIT, Phase.EXIT_ACTIVE],
+  [Phase.EXIT_ACTIVE]: [PhaseEvent.EXITING, Phase.EXIT_DONE, true],
+  [Phase.EXIT_DONE]: [PhaseEvent.EXITED],
+}
+
+export type TransitionState = {
+  [key in Phase]: boolean
+}
+
+export type TransitionProps = {
+  [key in PhaseEvent]?: () => void
+} & {
+  children: (transitionState: TransitionState, activePhase: Phase) => any
   in?: boolean
   appear?: boolean
   enter?: boolean
   exit?: boolean
   duration?: number
   alwaysMounted?: boolean
-  onEnter?: () => void
-  onEntering?: () => void
-  onEntered?: () => void
-  onExit?: () => void
-  onExiting?: () => void
-  onExited?: () => void
 }
-
-enum Phase {
-  APPEAR,
-  APPEARING,
-  APPEARED,
-  ENTER,
-  ENTERING,
-  ENTERED,
-  EXIT,
-  EXITING,
-  EXITED,
-}
-
-const NOOP = () => { }
-const TM = setTimeout(NOOP)
 
 export default (props: TransitionProps): VNode<any> => {
   const {
     children, in: inProp = false,
     appear = false, enter = true, exit = true,
     duration = 500, alwaysMounted = false,
-    onEnter = NOOP, onEntering = NOOP, onEntered = NOOP,
-    onExit = NOOP, onExiting = NOOP, onExited = NOOP,
   } = props
 
-  const timeoutRef = useRef(TM)
+  const tmRef = useRef<number>()
   let ignoreInPropChange = false
 
   const [phase, setPhase] = useState(() => {
     ignoreInPropChange = true
     if (!inProp) {
-      return Phase.EXITED
+      return Phase.EXIT_DONE
     }
     if (appear) {
       return Phase.APPEAR
     }
-    return Phase.APPEARED
+    return Phase.APPEAR_DONE
   })
 
   useEffect(() => {
-    switch (phase) {
-      case Phase.APPEAR: {
-        onEnter()
-        setPhase(Phase.APPEARING)
-        break
-      }
-      case Phase.APPEARING: {
-        onEntering()
-        timeoutRef.current = setTimeout(() => {
-          setPhase(Phase.APPEARED)
-        }, duration)
-        break
-      }
-      case Phase.APPEARED: {
-        onEntered()
-        break
-      }
-      case Phase.ENTER: {
-        onEnter()
-        setPhase(Phase.ENTERING)
-        break
-      }
-      case Phase.ENTERING: {
-        onEntering()
-        timeoutRef.current = setTimeout(() => {
-          setPhase(Phase.ENTERED)
-        }, duration)
-        break
-      }
-      case Phase.ENTERED: {
-        onEntered()
-        break
-      }
-      case Phase.EXIT: {
-        onExit()
-        setPhase(Phase.EXITING)
-        break
-      }
-      case Phase.EXITING: {
-        onExiting()
-        timeoutRef.current = setTimeout(() => {
-          setPhase(Phase.EXITED)
-        }, duration)
-        break
-      }
-      case Phase.EXITED: {
-        onExited()
-        break
+    const { setTimeout, clearTimeout } = window
+    const [eventName, nextPhase, delay] = EventMapping[phase]
+    props[eventName]?.()
+    if (nextPhase) {
+      if (delay) {
+        tmRef.current = setTimeout(setPhase, duration, nextPhase)
+      } else {
+        setPhase(nextPhase)
       }
     }
     return () => {
-      clearTimeout(timeoutRef.current)
+      clearTimeout(tmRef.current)
     }
-  }, [phase])
+  }, [phase, duration])
 
   useLayoutEffect(() => {
     if (!ignoreInPropChange) {
-      switch (true) {
-        case !!(inProp && enter): {
-          setPhase(Phase.ENTER)
-          break
-        }
-        case !!(inProp && !enter): {
-          setPhase(Phase.ENTERED)
-          break
-        }
-        case !!(!inProp && exit): {
-          setPhase(Phase.EXIT)
-          break
-        }
-        case !!(!inProp && !exit): {
-          setPhase(Phase.EXITED)
-          break
-        }
+      if (inProp) {
+        setPhase(enter ? Phase.ENTER : Phase.ENTER_DONE)
+      } else {
+        setPhase(exit ? Phase.EXIT : Phase.EXIT_DONE)
       }
     }
   }, [inProp])
 
-  const value = useMemo((): TransitionState => ({
-    appear: phase === Phase.APPEAR,
-    appearActive: phase === Phase.APPEARING,
-    appearDone: phase === Phase.APPEARED,
-    enter: phase === Phase.ENTER,
-    enterActive: phase === Phase.ENTERING,
-    enterDone: phase === Phase.ENTERED,
-    exit: phase === Phase.EXIT,
-    exitActive: phase === Phase.EXITING,
-    exitDone: phase === Phase.EXITED,
-  }), [phase])
+  const transitionState = useMemo(() => {
+    const value = {}
+    for (let key in Phase) {
+      value[Phase[key]] = phase === Phase[key]
+    }
+    return value as TransitionState
+  }, [phase])
 
-  return (alwaysMounted || phase !== Phase.EXITED)
-    && children(value)
+  return (alwaysMounted || phase !== Phase.EXIT_DONE)
+    && children(transitionState, phase)
 }

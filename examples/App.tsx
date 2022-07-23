@@ -10,10 +10,10 @@ export default () => {
   const toggleVisibility = () => setVisibility((oldVisible) => !oldVisible)
   const addGroupItem = () => setGroupsItems((oldGroupItems) => ([...oldGroupItems, Math.random()]))
   const removeFirstGroupItem = () => setGroupsItems(([, ...nextGroupItems]) => nextGroupItems)
-  const removeGroupItem = (index) => setGroupsItems((oldGroupItems) => ([...oldGroupItems.slice(0, index), ...oldGroupItems.slice(index + 1)])) // eslint-disable-line
+  const removeGroupItem = (index) => setGroupsItems((oldGroupItems) => ([...oldGroupItems.slice(0, index), ...oldGroupItems.slice(index + 1)]))
   const [colorItem, setColorItem] = useState(0)
   const switchPrevColorItem = () => setColorItem((prevColorItem) => Math.max(0, prevColorItem - 1))
-  const switchNextColorItem = () => setColorItem((prevColorItem) => Math.min(colorItems.length - 1, prevColorItem + 1)) // eslint-disable-line
+  const switchNextColorItem = () => setColorItem((prevColorItem) => Math.min(colorItems.length - 1, prevColorItem + 1))
   return (
     <>
       <style>
@@ -58,9 +58,10 @@ export default () => {
             appear
             duration={duration}
             classNames="fade"
+            alwaysMounted
           >
             <div className="item">
-              Visible [using class name]
+              Visible [class name]
             </div>
           </CSSTransition>
 
@@ -70,17 +71,19 @@ export default () => {
             in={visible}
             appear
             duration={duration}
+            alwaysMounted
             styles={{
-              enter: { opacity: 0 },
-              enterActive: { opacity: 1 },
               appear: { opacity: 0 },
               appearActive: { opacity: 1 },
+              enter: { opacity: 0 },
+              enterActive: { opacity: 1 },
               exit: { opacity: 1 },
               exitActive: { opacity: 0 },
+              exitDone: { opacity: 0 },
             }}
           >
             <div className="item">
-              Visible [using inline style]
+              Visible [inline styles]
             </div>
           </StyleTransition>
         </div>
@@ -98,7 +101,7 @@ export default () => {
                 key={groupItem}
                 classNames="fade"
               >
-                <div // eslint-disable-line
+                <div
                   className="item"
                   onClick={() => removeGroupItem(index)}
                 >

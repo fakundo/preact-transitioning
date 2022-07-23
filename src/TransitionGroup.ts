@@ -1,12 +1,12 @@
 import { cloneElement, VNode } from 'preact'
 import { useRef } from 'preact/hooks'
 
-interface TransitionGroupProps {
-  children: any,
-  appear?: boolean,
-  enter?: boolean,
-  exit?: boolean,
-  duration?: number,
+export type TransitionGroupProps = {
+  children: any
+  appear?: boolean
+  enter?: boolean
+  exit?: boolean
+  duration?: number
 }
 
 const getChildProp = (child, propName, defaultValue) => {

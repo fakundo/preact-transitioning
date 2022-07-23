@@ -1,55 +1,37 @@
 import { createElement, cloneElement, VNode } from 'preact'
 import { useMemo } from 'preact/hooks'
-import Transition, { TransitionProps, TransitionState } from './Transition'
+import Transition, { Phase, TransitionProps } from './Transition'
 
 type StyleTransitionStyles = {
-  appear?: object
-  appearActive?: object
-  appearDone?: object
-  enter?: object
-  enterActive?: object
-  enterDone?: object
-  exit?: object
-  exitActive?: object
-  exitDone?: object
+  [key in Phase]?: object
 }
 
-interface StyleTransitionProps extends Omit<TransitionProps, 'children'> {
+type StyleTransitionProps = Omit<TransitionProps, 'children'> & {
   children: VNode<any>
   styles: StyleTransitionStyles
 }
 
-const createStyle = (
-  transition: TransitionState,
-  styles: StyleTransitionStyles,
-): object => {
-  switch (true) {
-    case transition.appear: return styles.appear
-    case transition.appearActive: return { ...styles.appear, ...styles.appearActive }
-    case transition.appearDone: return styles.appearDone
-    case transition.enter: return styles.enter
-    case transition.enterActive: return { ...styles.enter, ...styles.enterActive }
-    case transition.enterDone: return styles.enterDone
-    case transition.exit: return styles.exit
-    case transition.exitActive: return { ...styles.exit, ...styles.exitActive }
-    case transition.exitDone: return styles.exitDone
-    default: return {}
+const computeStyle = (phase: Phase, styles: StyleTransitionStyles) => {
+  const style = styles[phase]
+  switch (phase) {
+    case Phase.APPEAR_ACTIVE: return { ...styles[Phase.APPEAR], ...style }
+    case Phase.ENTER_ACTIVE: return { ...styles[Phase.ENTER], ...style }
+    case Phase.EXIT_ACTIVE: return { ...styles[Phase.EXIT], ...style }
+    default: return style
   }
 }
 
 export default (props: StyleTransitionProps): VNode<any> => {
   const { children, styles, ...rest } = props
-  return (
-    createElement(Transition, rest, (transition: TransitionState) => {
-      const { style } = children.props
+  return createElement(Transition, rest, (state, phase: Phase) => {
+    const { style } = children.props
 
-      const finalStyle = useMemo(() => ({
-        ...createStyle(transition, styles), ...style,
-      }), [style, styles, transition])
+    const finalStyle = useMemo(() => ({
+      ...computeStyle(phase, styles), ...style,
+    }), [style, styles, phase])
 
-      return cloneElement(children, {
-        style: finalStyle,
-      })
+    return cloneElement(children, {
+      style: finalStyle,
     })
-  )
+  })
 }
