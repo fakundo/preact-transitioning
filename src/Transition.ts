@@ -1,4 +1,4 @@
-import { VNode } from 'preact'
+import { VNode, RefObject } from 'preact'
 import { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'preact/hooks'
 
 export enum Phase {
@@ -43,13 +43,14 @@ export type TransitionState = {
 export type TransitionProps = {
   [key in PhaseEvent]?: () => void
 } & {
-  children: (transitionState: TransitionState, activePhase: Phase) => any
+  children: (transitionState: TransitionState, activePhase: Phase, ref?: RefObject<Element>) => any
   in?: boolean
   appear?: boolean
   enter?: boolean
   exit?: boolean
   duration?: number
   alwaysMounted?: boolean
+  addEndListener?: (node: Element, done: () => any) => any
 }
 
 export default (props: TransitionProps): VNode<any> => {
@@ -57,8 +58,10 @@ export default (props: TransitionProps): VNode<any> => {
     children, in: inProp = false,
     appear = false, enter = true, exit = true,
     duration = 500, alwaysMounted = false,
+    addEndListener
   } = props
 
+  const nodeRef = useRef<Element>()
   const tmRef = useRef<number>()
   let ignoreInPropChange = false
 
@@ -79,7 +82,8 @@ export default (props: TransitionProps): VNode<any> => {
     props[eventName]?.()
     if (nextPhase) {
       if (delay) {
-        tmRef.current = setTimeout(setPhase, duration, nextPhase)
+        if (addEndListener) addEndListener(nodeRef.current, () => setPhase(nextPhase))
+        else tmRef.current = setTimeout(setPhase, duration, nextPhase)
       } else {
         setPhase(nextPhase)
       }
@@ -108,5 +112,5 @@ export default (props: TransitionProps): VNode<any> => {
   }, [phase])
 
   return (alwaysMounted || phase !== Phase.EXIT_DONE)
-    && children(transitionState, phase)
+    && children(transitionState, phase, nodeRef)
 }

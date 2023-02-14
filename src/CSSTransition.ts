@@ -1,4 +1,4 @@
-import { createElement, cloneElement, VNode } from 'preact'
+import { createElement, cloneElement, VNode, RefObject } from 'preact'
 import { useMemo } from 'preact/hooks'
 import Transition, { Phase, TransitionProps } from './Transition'
 
@@ -51,7 +51,7 @@ const computeClassName = (phase: Phase, classNames: CSSTransitionClassNames) => 
 
 export default (props: CSSTransitionProps): VNode<any> => {
   const { children, classNames, ...rest } = props
-  return createElement(Transition, rest, (state, phase: Phase) => {
+  return createElement(Transition, rest, (state, phase: Phase, ref: RefObject<Element>) => {
     const { className } = children.props
 
     const finalClassName = useMemo(() => (
@@ -60,6 +60,7 @@ export default (props: CSSTransitionProps): VNode<any> => {
 
     return cloneElement(children, {
       className: finalClassName,
+      ref,
     })
   })
 }
