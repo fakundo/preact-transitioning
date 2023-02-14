@@ -41,7 +41,7 @@ export type TransitionState = {
 }
 
 export type TransitionProps = {
-  [key in PhaseEvent]?: () => void
+  [key in PhaseEvent]?: (node?: Element) => void
 } & {
   children: (transitionState: TransitionState, activePhase: Phase, ref?: RefObject<Element>) => any
   in?: boolean
@@ -79,7 +79,7 @@ export default (props: TransitionProps): VNode<any> => {
   useEffect(() => {
     const { setTimeout, clearTimeout } = window
     const [eventName, nextPhase, delay] = EventMapping[phase]
-    props[eventName]?.()
+    props[eventName]?.(nodeRef.current)
     if (nextPhase) {
       if (delay) {
         if (addEndListener) addEndListener(nodeRef.current, () => setPhase(nextPhase))
