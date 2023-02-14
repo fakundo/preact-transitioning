@@ -4,7 +4,7 @@
 
 Exposes Preact components for easily implementing basic CSS animations and transitions.
 
-Lightweight, fast and has no dependencies. Inspired by [`react-transition-group`](https://reactcommunity.org/react-transition-group/) and has almost the same API. Take a look how it works.
+Lightweight and fast implementation. Inspired by [`react-transition-group`](https://reactcommunity.org/react-transition-group/) and has almost the same API. Take a look how it works.
 
 ## Installation
   
@@ -95,14 +95,14 @@ Detecting transition end:
 
 ```js
 <CSSTransition
-  addEndListener={(node, done) =>
-    node.addEventListener('transitionend', done, { once: true, capture: false })
-  }
-  appear={true}
   in={!hidden}
+  classNames="fade"
+  addEndListener={(node, done) => {
+    node.addEventListener('transitionend', done, { once: true, capture: false })
+  }}
 >
   <div>
-    Animated Element
+    Animated element
   </div>
 </CSSTransition>
 ```
@@ -111,20 +111,22 @@ Using event callbacks to animate height:
 
 ```js
 <CSSTransition
-  onEnter={(node) => node.style.height = `${node.scrollHeight}px`}
-  onEntered={(node) => node.style.height = '' }
+  in={!hidden}
+  classNames="fade"
+  onEnter={(node) => {
+    node.style.height = `${node.scrollHeight}px`
+  }}
+  onEntered={(node) => {
+    node.style.height = ''
+  }}
   onExit={(node) => {
     node.style.height = `${node.scrollHeight}px`
     // force reflow
     node.clientHeight
   }}
-  appear={true}
-  in={!hidden}
 >
-  <div className='wrapper'>
-    <div className='content'>
-      Animated Element
-    </div>
+  <div>
+    Animated element
   </div>
 </CSSTransition>
 ```
@@ -135,13 +137,12 @@ Using event callbacks to animate height:
 
 ```ts
 type TransitionProps = {
-  children: (transitionState: TransitionState) => any
+  children: (transitionState: TransitionState, activePhase: Phase) => any
   in?: boolean = false
   appear?: boolean = false
   enter?: boolean = true
   exit?: boolean = true
   duration?: number = 500
-  addEndListener?: (node: Element, done: () => void) => void
   alwaysMounted?: boolean = false
   onEnter?: (node: Element) => void
   onEntering?: (node: Element) => void
@@ -149,6 +150,7 @@ type TransitionProps = {
   onExit?: (node: Element) => void
   onExiting?: (node: Element) => void
   onExited?: (node: Element) => void
+  addEndListener?: (node: Element, done: () => void) => void
 }
 ```
 

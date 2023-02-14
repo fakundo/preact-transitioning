@@ -1,5 +1,6 @@
-import { VNode, RefObject } from 'preact'
-import { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'preact/hooks'
+import { VNode, cloneElement } from 'preact';
+import { mergeRefs } from 'preact-merge-refs';
+import { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'preact/hooks';
 
 export enum Phase {
   APPEAR = 'appear',
@@ -23,7 +24,7 @@ enum PhaseEvent {
 }
 
 const EventMapping: {
-  [key in Phase]: [PhaseEvent, Phase?, boolean?]
+  [key in Phase]: [PhaseEvent, Phase?, boolean?];
 } = {
   [Phase.APPEAR]: [PhaseEvent.ENTER, Phase.APPEAR_ACTIVE],
   [Phase.APPEAR_ACTIVE]: [PhaseEvent.ENTERING, Phase.APPEAR_DONE, true],
@@ -34,83 +35,100 @@ const EventMapping: {
   [Phase.EXIT]: [PhaseEvent.EXIT, Phase.EXIT_ACTIVE],
   [Phase.EXIT_ACTIVE]: [PhaseEvent.EXITING, Phase.EXIT_DONE, true],
   [Phase.EXIT_DONE]: [PhaseEvent.EXITED],
-}
+};
 
 export type TransitionState = {
-  [key in Phase]: boolean
-}
+  [key in Phase]: boolean;
+};
 
 export type TransitionProps = {
-  [key in PhaseEvent]?: (node?: Element) => void
+  [key in PhaseEvent]?: (node?: Element) => void;
 } & {
-  children: (transitionState: TransitionState, activePhase: Phase, ref?: RefObject<Element>) => any
-  in?: boolean
-  appear?: boolean
-  enter?: boolean
-  exit?: boolean
-  duration?: number
-  alwaysMounted?: boolean
-  addEndListener?: (node: Element, done: () => void) => void
-}
+  children: (transitionState: TransitionState, activePhase: Phase) => any;
+  in?: boolean;
+  appear?: boolean;
+  enter?: boolean;
+  exit?: boolean;
+  duration?: number;
+  alwaysMounted?: boolean;
+  addEndListener?: (node: Element, done: () => void) => void;
+};
 
 export default (props: TransitionProps): VNode<any> => {
   const {
-    children, in: inProp = false,
-    appear = false, enter = true, exit = true,
-    duration = 500, alwaysMounted = false,
+    children,
+    in: inProp = false,
+    appear = false,
+    enter = true,
+    exit = true,
+    duration = 500,
+    alwaysMounted = false,
     addEndListener,
-  } = props
+  } = props;
 
-  const nodeRef = useRef<Element>()
-  const tmRef = useRef<number>()
-  let ignoreInPropChange = false
+  const nodeRef = useRef<Element>();
+  const tmRef = useRef<number>();
+  let ignoreInPropChange = false;
 
+  // Make state
   const [phase, setPhase] = useState(() => {
-    ignoreInPropChange = true
+    ignoreInPropChange = true;
     if (!inProp) {
-      return Phase.EXIT_DONE
+      return Phase.EXIT_DONE;
     }
     if (appear) {
-      return Phase.APPEAR
+      return Phase.APPEAR;
     }
-    return Phase.APPEAR_DONE
-  })
+    return Phase.APPEAR_DONE;
+  });
 
+  // Effect for phase change
   useEffect(() => {
-    const { setTimeout, clearTimeout } = window
-    const [eventName, nextPhase, delay] = EventMapping[phase]
-    props[eventName]?.(nodeRef.current)
+    const { setTimeout, clearTimeout } = window;
+    const [eventName, nextPhase, delay] = EventMapping[phase];
+    props[eventName]?.(nodeRef.current);
     if (nextPhase) {
       if (delay) {
-        if (addEndListener) addEndListener(nodeRef.current, () => setPhase(nextPhase))
-        else tmRef.current = setTimeout(setPhase, duration, nextPhase)
+        if (addEndListener) {
+          addEndListener(nodeRef.current, () => setPhase(nextPhase));
+        } else {
+          tmRef.current = setTimeout(setPhase, duration, nextPhase);
+        }
       } else {
-        setPhase(nextPhase)
+        setPhase(nextPhase);
       }
     }
     return () => {
-      clearTimeout(tmRef.current)
-    }
-  }, [phase, duration])
+      clearTimeout(tmRef.current);
+    };
+  }, [phase, duration]);
 
+  // Effect for initial phase
   useLayoutEffect(() => {
     if (!ignoreInPropChange) {
       if (inProp) {
-        setPhase(enter ? Phase.ENTER : Phase.ENTER_DONE)
+        setPhase(enter ? Phase.ENTER : Phase.ENTER_DONE);
       } else {
-        setPhase(exit ? Phase.EXIT : Phase.EXIT_DONE)
+        setPhase(exit ? Phase.EXIT : Phase.EXIT_DONE);
       }
     }
-  }, [inProp])
+  }, [inProp]);
 
+  // Make transition state
   const transitionState = useMemo(() => {
-    const value = {}
-    for (let key in Phase) {
-      value[Phase[key]] = phase === Phase[key]
-    }
-    return value as TransitionState
-  }, [phase])
+    const value = {};
+    Object.values(Phase).forEach(val => {
+      value[val] = phase === val;
+    });
+    return value as TransitionState;
+  }, [phase]);
 
-  return (alwaysMounted || phase !== Phase.EXIT_DONE)
-    && children(transitionState, phase, nodeRef)
-}
+  // Do not render anything
+  if (!alwaysMounted && phase === Phase.EXIT_DONE) {
+    return null;
+  }
+
+  // Render child
+  const child = children(transitionState, phase);
+  return cloneElement(child, { ref: mergeRefs([nodeRef, child.ref]) });
+};

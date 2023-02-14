@@ -3,9 +3,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
     "paths": {
-      "preact-transitioning": [
-        "./lib/types"
-      ]
+      "preact-transitioning": ["./lib/types"]
     }
-  },
+  }
 }
