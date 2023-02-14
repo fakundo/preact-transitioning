@@ -50,7 +50,7 @@ export type TransitionProps = {
   exit?: boolean
   duration?: number
   alwaysMounted?: boolean
-  addEndListener?: (node: Element, done: () => any) => any
+  addEndListener?: (node: Element, done: () => void) => void
 }
 
 export default (props: TransitionProps): VNode<any> => {
