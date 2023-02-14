@@ -43,13 +43,14 @@ export type TransitionState = {
 export type TransitionProps = {
   [key in PhaseEvent]?: (node?: Element) => void
 } & {
-  children: (transitionState: TransitionState, activePhase: Phase, ref: RefObject<Element>) => any
+  children: (transitionState: TransitionState, activePhase: Phase, ref?: RefObject<Element>) => any
   in?: boolean
   appear?: boolean
   enter?: boolean
   exit?: boolean
   duration?: number
   alwaysMounted?: boolean
+  addEndListener?: (node: Element, done: () => any) => any
 }
 
 export default (props: TransitionProps): VNode<any> => {
@@ -57,6 +58,7 @@ export default (props: TransitionProps): VNode<any> => {
     children, in: inProp = false,
     appear = false, enter = true, exit = true,
     duration = 500, alwaysMounted = false,
+    addEndListener
   } = props
 
   const nodeRef = useRef<Element>()
@@ -80,7 +82,8 @@ export default (props: TransitionProps): VNode<any> => {
     props[eventName]?.(nodeRef.current)
     if (nextPhase) {
       if (delay) {
-        tmRef.current = setTimeout(setPhase, duration, nextPhase)
+        if (addEndListener) addEndListener(nodeRef.current, () => setPhase(nextPhase))
+        else tmRef.current = setTimeout(setPhase, duration, nextPhase)
       } else {
         setPhase(nextPhase)
       }
