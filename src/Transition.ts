@@ -58,7 +58,7 @@ export default (props: TransitionProps): VNode<any> => {
     children, in: inProp = false,
     appear = false, enter = true, exit = true,
     duration = 500, alwaysMounted = false,
-    addEndListener
+    addEndListener,
   } = props
 
   const nodeRef = useRef<Element>()
