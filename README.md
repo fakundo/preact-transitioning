@@ -91,6 +91,44 @@ import { TransitionGroup } from 'preact-transitioning'
 </TransitionGroup>
 ```
 
+Detecting transition end:
+
+```js
+<CSSTransition
+  addEndListener={(node, done) =>
+    node.addEventListener('transitionend', done, { once: true, capture: false })
+  }
+  appear={true}
+  in={!hidden}
+>
+  <div>
+    Animated Element
+  </div>
+</CSSTransition>
+```
+
+Using event callbacks to animate height:
+
+```js
+<CSSTransition
+  onEnter={(node) => node.style.height = `${node.scrollHeight}px`}
+  onEntered={(node) => node.style.height = '' }
+  onExit={(node) => {
+    node.style.height = `${node.scrollHeight}px`
+    // force reflow
+    node.clientHeight
+  }}
+  appear={true}
+  in={!hidden}
+>
+  <div className='wrapper'>
+    <div className='content'>
+      Animated Element
+    </div>
+  </div>
+</CSSTransition>
+```
+
 ## API
 
 ### Transition props
@@ -103,13 +141,14 @@ type TransitionProps = {
   enter?: boolean = true
   exit?: boolean = true
   duration?: number = 500
+  addEndListener?: (node: Element, done: () => void) => void
   alwaysMounted?: boolean = false
-  onEnter?: () => void
-  onEntering?: () => void
-  onEntered?: () => void
-  onExit?: () => void
-  onExiting?: () => void
-  onExited?: () => void
+  onEnter?: (node: Element) => void
+  onEntering?: (node: Element) => void
+  onEntered?: (node: Element) => void
+  onExit?: (node: Element) => void
+  onExiting?: (node: Element) => void
+  onExited?: (node: Element) => void
 }
 ```
 
