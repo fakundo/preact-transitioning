@@ -1,25 +1,9 @@
-import { useState } from 'preact/hooks';
-import { Transition, TransitionGroup, CSSTransition, StyleTransition } from 'preact-transitioning';
-
-const colorItems = ['orange', 'purple', 'blue', 'red'];
-const duration = 500;
+import { duration } from './config';
+import ToggleExample from './ToggleExample';
+import AddRemoveExample from './AddRemoveExample';
+import ItemColorExample from './ItemColorExample';
 
 export default function App() {
-  const [groupItems, setGroupsItems] = useState([Math.random()]);
-  const [visible, setVisibility] = useState(true);
-  const toggleVisibility = () => setVisibility(oldVisible => !oldVisible);
-  const addGroupItem = () => setGroupsItems(oldGroupItems => [...oldGroupItems, Math.random()]);
-  const removeFirstGroupItem = () => setGroupsItems(([, ...nextGroupItems]) => nextGroupItems);
-  const removeGroupItem = index =>
-    setGroupsItems(oldGroupItems => [
-      ...oldGroupItems.slice(0, index),
-      ...oldGroupItems.slice(index + 1),
-    ]);
-  const [colorItem, setColorItem] = useState(0);
-  const switchPrevColorItem = () => setColorItem(prevColorItem => Math.max(0, prevColorItem - 1));
-  const switchNextColorItem = () =>
-    setColorItem(prevColorItem => Math.min(colorItems.length - 1, prevColorItem + 1));
-
   return (
     <>
       <style>
@@ -41,85 +25,11 @@ export default function App() {
       </style>
 
       <div className="root">
-        <div className="container">
-          <button onClick={toggleVisibility} type="button">
-            Toggle visibility
-          </button>
+        <ToggleExample />
 
-          <hr />
+        <AddRemoveExample />
 
-          <Transition in={visible} appear duration={duration} alwaysMounted>
-            {transitionState => (
-              <div>
-                <h5>Transition state</h5>
-                <pre>{JSON.stringify(transitionState, null, ' ')}</pre>
-              </div>
-            )}
-          </Transition>
-
-          <hr />
-
-          <CSSTransition in={visible} appear duration={duration} classNames="fade" alwaysMounted>
-            <div className="item">Visible [class name]</div>
-          </CSSTransition>
-
-          <hr />
-
-          <StyleTransition
-            in={visible}
-            appear
-            duration={duration}
-            alwaysMounted
-            styles={{
-              appear: { opacity: 0 },
-              appearActive: { opacity: 1 },
-              enter: { opacity: 0 },
-              enterActive: { opacity: 1 },
-              exit: { opacity: 1 },
-              exitActive: { opacity: 0 },
-              exitDone: { opacity: 0 },
-            }}
-            onEnter={node => console.log('onEnter', node)}
-          >
-            <div className="item">Visible [inline styles]</div>
-          </StyleTransition>
-        </div>
-
-        <div className="container">
-          <button onClick={addGroupItem} type="button">
-            Add item
-          </button>{' '}
-          <button onClick={removeFirstGroupItem} type="button">
-            Remove first item
-          </button>
-          <hr />
-          <TransitionGroup duration={duration}>
-            {groupItems.map((groupItem, index) => (
-              <CSSTransition key={groupItem} classNames="fade">
-                <button type="button" className="item" onClick={() => removeGroupItem(index)}>
-                  {`#${index} - ${groupItem}`} &times;
-                </button>
-              </CSSTransition>
-            ))}
-          </TransitionGroup>
-        </div>
-
-        <div className="container">
-          <button onClick={switchNextColorItem} type="button">
-            Next item color
-          </button>{' '}
-          <button onClick={switchPrevColorItem} type="button">
-            Prev item color
-          </button>
-          <hr />
-          <TransitionGroup duration={duration} exit={false}>
-            <CSSTransition key={colorItem} classNames="fade">
-              <div className="item" style={{ background: colorItems[colorItem] }}>
-                {colorItems[colorItem]}
-              </div>
-            </CSSTransition>
-          </TransitionGroup>
-        </div>
+        <ItemColorExample />
       </div>
     </>
   );
