@@ -14,14 +14,14 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx$/,
+        test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
       },
     ],
   },
   resolve: {
-    extensions: ['.tsx', '.js'],
+    extensions: ['.tsx', '.ts', '.js'],
     alias: {
       'preact-transitioning': path.resolve(__dirname),
     },

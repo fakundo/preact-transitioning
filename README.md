@@ -4,7 +4,7 @@
 
 Exposes Preact components for easily implementing basic CSS animations and transitions.
 
-Lightweight and fast implementation. Inspired by [`react-transition-group`](https://reactcommunity.org/react-transition-group/) and has almost the same API. Take a look how it works.
+Lightweight and fast implementation. Inspired by [`react-transition-group`](https://reactcommunity.org/react-transition-group/) and has almost the same API. Please take a look how it works.
 
 ## Installation
   
@@ -19,6 +19,10 @@ npm i preact-transitioning
 [Source](https://github.com/fakundo/preact-transitioning/tree/master/examples)
 
 ## Usage
+
+### Transition Component
+
+The `Transition` component controls the mounting and unmounting of a component with transitions.
 
 ```js
 import { Transition } from 'preact-transitioning'
@@ -37,7 +41,11 @@ import { Transition } from 'preact-transitioning'
   )}
 </Transition>
 ```
-###
+
+### CSSTransition Component
+
+The `CSSTransition` component applies CSS classes to animate components based on their state.
+
 ```js
 import { CSSTransition } from 'preact-transitioning'
 
@@ -52,7 +60,11 @@ import { CSSTransition } from 'preact-transitioning'
   </div>
 </CSSTransition>
 ```
-###
+
+### StyleTransition Component
+
+The `StyleTransition` component applies inline styles to animate components based on their state.
+
 ```js
 import { StyleTransition } from 'preact-transitioning'
 
@@ -71,7 +83,11 @@ import { StyleTransition } from 'preact-transitioning'
   </div>
 </StyleTransition>
 ```
-###
+
+### TransitionGroup Component
+
+The `TransitionGroup` component manages a set of transitions as a group.
+
 ```js
 import { TransitionGroup } from 'preact-transitioning'
 
@@ -91,7 +107,7 @@ import { TransitionGroup } from 'preact-transitioning'
 </TransitionGroup>
 ```
 
-Detecting transition end:
+### Detecting transition end:
 
 ```js
 <CSSTransition
@@ -107,7 +123,7 @@ Detecting transition end:
 </CSSTransition>
 ```
 
-Using event callbacks to animate height:
+### Using event callbacks to animate height:
 
 ```js
 <CSSTransition
@@ -133,7 +149,7 @@ Using event callbacks to animate height:
 
 ## API
 
-### Transition props
+### Transition Props
 
 ```ts
 type TransitionProps = {
@@ -154,7 +170,7 @@ type TransitionProps = {
 }
 ```
 
-TransitionState passed to the children function has the following structure
+The `TransitionState` passed to the children function has the following structure:
 
 ```ts
 type TransitionState = {
@@ -170,7 +186,7 @@ type TransitionState = {
 }
 ```
 
-### CSSTransition props
+### CSSTransition Props
 
 ```ts
 type CSSTransitionProps = TransitionProps & {
@@ -189,11 +205,11 @@ type CSSTransitionProps = TransitionProps & {
 }
 ```
 
-If classNames is a string, then computed className will be suffixed according to the current transition state. For example, if you pass the string fade as classNames, then fade-appear-active className will be applied during the appearActive phase.
+If `classNames` is a string, then the computed className will be suffixed according to the current transition state. For example, if you pass the string `"fade"` as `classNames`, then `fade-appear-active` className will be applied during the `appearActive` phase.
 
-If classNames is an object, then final className will be taken from that object according to the current transition state. For example, when the element enters, enterActive className will be applied.
+If `classNames` is an object, then the final className will be taken from that object according to the current transition state. For example, when the element enters, the `enterActive` property will be used as className.
 
-### StyleTransition props
+### StyleTransition Props
 
 ```ts
 type StyleTransitionProps = TransitionProps & {
@@ -212,9 +228,9 @@ type StyleTransitionProps = TransitionProps & {
 }
 ```
 
-The styles prop used to compute inline styles of the element according to the current transition state. For example, when the element enters, enterActive styles will be applied.
+The `styles` prop is used to compute inline styles of the element according to the current transition state. For example, when the element enters, `enterActive` styles will be applied.
 
-### TransitionGroup props
+### TransitionGroup Props
 
 ```ts
 type TransitionGroupProps = {

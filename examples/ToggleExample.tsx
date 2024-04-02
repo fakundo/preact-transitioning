@@ -1,10 +1,13 @@
 import { useState } from 'preact/hooks';
 import { Transition, CSSTransition, StyleTransition } from 'preact-transitioning';
-import { duration } from './config';
+import { DURATION } from './config';
 
 export default function ToggleExample() {
   const [visible, setVisibility] = useState(true);
-  const toggleVisibility = () => setVisibility(oldVisible => !oldVisible);
+
+  const toggleVisibility = () => {
+    setVisibility(prevVisible => !prevVisible);
+  };
 
   return (
     <div className="container">
@@ -14,7 +17,7 @@ export default function ToggleExample() {
 
       <hr />
 
-      <Transition in={visible} appear duration={duration} alwaysMounted>
+      <Transition in={visible} appear duration={DURATION} alwaysMounted>
         {transitionState => (
           <div>
             <h5>Transition state</h5>
@@ -25,7 +28,7 @@ export default function ToggleExample() {
 
       <hr />
 
-      <CSSTransition in={visible} appear duration={duration} classNames="fade" alwaysMounted>
+      <CSSTransition in={visible} appear duration={DURATION} classNames="fade" alwaysMounted>
         <div className="item">Visible [class name]</div>
       </CSSTransition>
 
@@ -34,7 +37,7 @@ export default function ToggleExample() {
       <StyleTransition
         in={visible}
         appear
-        duration={duration}
+        duration={DURATION}
         alwaysMounted
         styles={{
           appear: { opacity: 0 },

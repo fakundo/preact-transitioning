@@ -1,2 +1,2 @@
-export const colorItems = ['orange', 'purple', 'blue', 'red'];
-export const duration = 500;
+export const COLORS = ['orange', 'purple', 'blue', 'red'];
+export const DURATION = 500;

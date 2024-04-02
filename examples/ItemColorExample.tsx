@@ -1,26 +1,31 @@
 import { useState } from 'preact/hooks';
 import { TransitionGroup, CSSTransition } from 'preact-transitioning';
-import { colorItems, duration } from './config';
+import { COLORS, DURATION } from './config';
 
 export default function ItemColorExample() {
   const [colorItem, setColorItem] = useState(0);
-  const switchPrevColorItem = () => setColorItem(prevColorItem => Math.max(0, prevColorItem - 1));
-  const switchNextColorItem = () =>
-    setColorItem(prevColorItem => Math.min(colorItems.length - 1, prevColorItem + 1));
+
+  const switchPrevColor = () => {
+    setColorItem(prevColorItem => Math.max(0, prevColorItem - 1));
+  };
+
+  const switchNextColor = () => {
+    setColorItem(prevColorItem => Math.min(COLORS.length - 1, prevColorItem + 1));
+  };
 
   return (
     <div className="container">
-      <button onClick={switchNextColorItem} type="button">
+      <button onClick={switchNextColor} type="button">
         Next item color
       </button>{' '}
-      <button onClick={switchPrevColorItem} type="button">
+      <button onClick={switchPrevColor} type="button">
         Prev item color
       </button>
       <hr />
-      <TransitionGroup duration={duration} exit={false}>
+      <TransitionGroup duration={DURATION} exit={false}>
         <CSSTransition key={colorItem} classNames="fade">
-          <div className="item" style={{ background: colorItems[colorItem] }}>
-            {colorItems[colorItem]}
+          <div className="item" style={{ background: COLORS[colorItem] }}>
+            {COLORS[colorItem]}
           </div>
         </CSSTransition>
       </TransitionGroup>
