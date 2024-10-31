@@ -14,7 +14,7 @@ export enum Phase {
   EXIT_DONE = 'exitDone',
 }
 
-enum PhaseEvent {
+export enum PhaseEvent {
   ENTER = 'onEnter',
   ENTERING = 'onEntering',
   ENTERED = 'onEntered',

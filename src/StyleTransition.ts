@@ -2,11 +2,11 @@ import { createElement, cloneElement, VNode } from 'preact';
 import { useMemo } from 'preact/hooks';
 import Transition, { Phase, TransitionProps } from './Transition';
 
-type StyleTransitionStyles = {
+export type StyleTransitionStyles = {
   [key in Phase]?: object;
 };
 
-type StyleTransitionProps = Omit<TransitionProps, 'children'> & {
+export type StyleTransitionProps = Omit<TransitionProps, 'children'> & {
   children: VNode<any>;
   styles: StyleTransitionStyles;
 };
