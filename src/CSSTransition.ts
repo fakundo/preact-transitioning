@@ -2,13 +2,13 @@ import { createElement, cloneElement, VNode } from 'preact';
 import { useMemo } from 'preact/hooks';
 import Transition, { Phase, TransitionProps } from './Transition';
 
-type CSSTransitionClassNames =
+export type CSSTransitionClassNames =
   | string
   | {
       [key in Phase]?: string;
     };
 
-type CSSTransitionProps = Omit<TransitionProps, 'children'> & {
+export type CSSTransitionProps = Omit<TransitionProps, 'children'> & {
   children: VNode<any>;
   classNames: CSSTransitionClassNames;
 };
