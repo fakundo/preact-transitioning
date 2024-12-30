@@ -44,7 +44,7 @@ export type TransitionState = {
 export type TransitionProps = {
   [key in PhaseEvent]?: (node?: Element) => void;
 } & {
-  children: (transitionState: TransitionState, activePhase: Phase) => any;
+  children: (transitionState: TransitionState, activePhase: Phase) => VNode<any>;
   in?: boolean;
   appear?: boolean;
   enter?: boolean;
