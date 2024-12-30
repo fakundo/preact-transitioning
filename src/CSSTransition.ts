@@ -52,13 +52,18 @@ const computeClassName = (phase: Phase, classNames: CSSTransitionClassNames) => 
 export default (props: CSSTransitionProps): VNode<any> => {
   const { children, classNames, ...rest } = props;
   return createElement(Transition, rest, (state, phase: Phase) => {
-    const { className } = children.props;
+    const { className, class: cls } = children.props;
 
-    const finalClassName = useMemo(
-      () => joinClassNames(className, computeClassName(phase, classNames)),
-      [className, classNames, phase],
+    const finalProps = useMemo(
+      () => {
+        const propName = cls && !className ? 'class' : 'className';
+        const finalClassNames = joinClassNames(className ?? cls, computeClassName(phase, classNames));
+
+        return { [propName]: finalClassNames };
+      },
+      [className, cls, classNames, phase],
     );
 
-    return cloneElement(children, { className: finalClassName });
+    return cloneElement(children, finalProps);
   });
 };
