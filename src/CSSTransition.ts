@@ -51,6 +51,19 @@ const computeClassName = (phase: Phase, classNames: CSSTransitionClassNames) => 
 
 export default (props: CSSTransitionProps): VNode<any> => {
   const { children, classNames, ...rest } = props;
+
+  if (!rest.duration) {
+    const addEndListener = rest.addEndListener;
+
+    rest.addEndListener = (node: Element, done: () => void) => {
+      if (addEndListener) {
+        addEndListener(node, done);
+      } else {
+        node.addEventListener("transitionend", done, { once: true });
+      }
+    };
+  }
+
   return createElement(Transition, rest, (state, phase: Phase) => {
     const { className } = children.props;
 
