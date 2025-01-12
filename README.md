@@ -153,20 +153,20 @@ import { TransitionGroup } from 'preact-transitioning'
 
 ```ts
 type TransitionProps = {
-  children: (transitionState: TransitionState, activePhase: Phase) => any
+  children: (transitionState: TransitionState, activePhase: Phase) => ComponentChildren
   in?: boolean = false
   appear?: boolean = false
   enter?: boolean = true
   exit?: boolean = true
   duration?: number = 500
   alwaysMounted?: boolean = false
-  onEnter?: (node: Element) => void
-  onEntering?: (node: Element) => void
-  onEntered?: (node: Element) => void
-  onExit?: (node: Element) => void
-  onExiting?: (node: Element) => void
-  onExited?: (node: Element) => void
-  addEndListener?: (node: Element, done: () => void) => void
+  onEnter?: (node?: Element | Text) => void
+  onEntering?: (node?: Element | Text) => void
+  onEntered?: (node?: Element | Text) => void
+  onExit?: (node?: Element | Text) => void
+  onExiting?: (node?: Element | Text) => void
+  onExited?: (node?: Element | Text) => void
+  addEndListener?: (node: Element | Text, done: () => void) => void
 }
 ```
 
@@ -234,7 +234,7 @@ The `styles` prop is used to compute inline styles of the element according to t
 
 ```ts
 type TransitionGroupProps = {
-  children: any
+  children: ComponentChildren
   appear?: boolean
   enter?: boolean
   exit?: boolean

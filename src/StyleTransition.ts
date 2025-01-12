@@ -1,14 +1,9 @@
 import { createElement, cloneElement, VNode } from 'preact';
 import { useMemo } from 'preact/hooks';
-import Transition, { Phase, TransitionProps } from './Transition';
+import { Transition, Phase, TransitionProps } from './Transition';
 
 export type StyleTransitionStyles = {
   [key in Phase]?: object;
-};
-
-export type StyleTransitionProps = Omit<TransitionProps, 'children'> & {
-  children: VNode<any>;
-  styles: StyleTransitionStyles;
 };
 
 const computeStyle = (phase: Phase, styles: StyleTransitionStyles) => {
@@ -25,7 +20,12 @@ const computeStyle = (phase: Phase, styles: StyleTransitionStyles) => {
   }
 };
 
-export default (props: StyleTransitionProps): VNode<any> => {
+export type StyleTransitionProps = Omit<TransitionProps, 'children'> & {
+  children: VNode<any>;
+  styles: StyleTransitionStyles;
+};
+
+export function StyleTransition(props: StyleTransitionProps) {
   const { children, styles, ...rest } = props;
   return createElement(Transition, rest, (state, phase: Phase) => {
     const { style } = children.props;
@@ -37,4 +37,4 @@ export default (props: StyleTransitionProps): VNode<any> => {
 
     return cloneElement(children, { style: finalStyle });
   });
-};
+}

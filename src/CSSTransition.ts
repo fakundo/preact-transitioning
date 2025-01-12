@@ -1,17 +1,12 @@
 import { createElement, cloneElement, VNode } from 'preact';
 import { useMemo } from 'preact/hooks';
-import Transition, { Phase, TransitionProps } from './Transition';
+import { Transition, Phase, TransitionProps } from './Transition';
 
 export type CSSTransitionClassNames =
   | string
   | {
       [key in Phase]?: string;
     };
-
-export type CSSTransitionProps = Omit<TransitionProps, 'children'> & {
-  children: VNode<any>;
-  classNames: CSSTransitionClassNames;
-};
 
 const Suffix: {
   [key in Phase]: string;
@@ -49,21 +44,21 @@ const computeClassName = (phase: Phase, classNames: CSSTransitionClassNames) => 
   }
 };
 
-export default (props: CSSTransitionProps): VNode<any> => {
+export type CSSTransitionProps = Omit<TransitionProps, 'children'> & {
+  children: VNode<any>;
+  classNames: CSSTransitionClassNames;
+};
+
+export function CSSTransition(props: CSSTransitionProps) {
   const { children, classNames, ...rest } = props;
   return createElement(Transition, rest, (state, phase: Phase) => {
     const { className, class: cls } = children.props;
 
-    const finalProps = useMemo(
-      () => {
-        const propName = cls && !className ? 'class' : 'className';
-        const finalClassNames = joinClassNames(className ?? cls, computeClassName(phase, classNames));
-
-        return { [propName]: finalClassNames };
-      },
+    const finalClassName = useMemo(
+      () => joinClassNames(cls || className, computeClassName(phase, classNames)),
       [className, cls, classNames, phase],
     );
 
-    return cloneElement(children, finalProps);
+    return cloneElement(children, { class: finalClassName });
   });
-};
+}

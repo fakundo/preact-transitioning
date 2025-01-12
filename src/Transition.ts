@@ -1,6 +1,6 @@
-import { VNode, cloneElement } from 'preact';
-import { mergeRefs } from 'preact-merge-refs';
+import { ComponentChildren, createElement } from 'preact';
 import { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'preact/hooks';
+import { TransitionChild } from './TransitionChild';
 
 export enum Phase {
   APPEAR = 'appear',
@@ -42,19 +42,19 @@ export type TransitionState = {
 };
 
 export type TransitionProps = {
-  [key in PhaseEvent]?: (node?: Element) => void;
+  [key in PhaseEvent]?: (node?: Element | Text) => void;
 } & {
-  children: (transitionState: TransitionState, activePhase: Phase) => VNode<any>;
   in?: boolean;
   appear?: boolean;
   enter?: boolean;
   exit?: boolean;
   duration?: number;
   alwaysMounted?: boolean;
-  addEndListener?: (node: Element, done: () => void) => void;
+  addEndListener?: (node: Element | Text, done: () => void) => void;
+  children: (transitionState: TransitionState, activePhase: Phase) => ComponentChildren;
 };
 
-export default (props: TransitionProps): VNode<any> => {
+export function Transition(props: TransitionProps) {
   const {
     children,
     in: inProp = false,
@@ -66,7 +66,7 @@ export default (props: TransitionProps): VNode<any> => {
     addEndListener,
   } = props;
 
-  const nodeRef = useRef<Element>();
+  const nodeRef = useRef<Element | Text>();
   const tmRef = useRef<number>();
   let ignoreInPropChange = false;
 
@@ -86,7 +86,8 @@ export default (props: TransitionProps): VNode<any> => {
   useEffect(() => {
     const { setTimeout, clearTimeout } = window;
     const [eventName, nextPhase, delay] = EventMapping[phase];
-    props[eventName]?.(nodeRef.current);
+    const { [eventName]: event } = props;
+    event?.(nodeRef.current);
     if (nextPhase) {
       if (delay) {
         if (addEndListener) {
@@ -128,7 +129,6 @@ export default (props: TransitionProps): VNode<any> => {
     return null;
   }
 
-  // Render child
-  const child = children(transitionState, phase);
-  return cloneElement(child, { ref: mergeRefs([nodeRef, child.ref]) });
-};
+  // Render children
+  return createElement(TransitionChild, { nodeRef, children: children(transitionState, phase) });
+}

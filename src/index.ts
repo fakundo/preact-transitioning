@@ -1,21 +1,4 @@
-export {
-  default as Transition,
-  Phase,
-  PhaseEvent,
-  TransitionState,
-  TransitionProps,
-} from './Transition';
-export {
-  default as TransitionGroup,
-  TransitionGroupProps,
-} from './TransitionGroup';
-export {
-  default as CSSTransition,
-  CSSTransitionClassNames,
-  CSSTransitionProps,
-} from './CSSTransition';
-export {
-  default as StyleTransition,
-  StyleTransitionStyles,
-  StyleTransitionProps,
-} from './StyleTransition';
+export { Transition, Phase, PhaseEvent, TransitionState, TransitionProps } from './Transition';
+export { StyleTransition, StyleTransitionStyles, StyleTransitionProps } from './StyleTransition';
+export { CSSTransition, CSSTransitionClassNames, CSSTransitionProps } from './CSSTransition';
+export { TransitionGroup, TransitionGroupProps } from './TransitionGroup';
