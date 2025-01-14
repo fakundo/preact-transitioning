@@ -51,6 +51,19 @@ export type CSSTransitionProps = Omit<TransitionProps, 'children'> & {
 
 export function CSSTransition(props: CSSTransitionProps) {
   const { children, classNames, ...rest } = props;
+
+  if (!rest.duration) {
+    const addEndListener = rest.addEndListener;
+
+    rest.addEndListener = (node: Element, done: () => void) => {
+      if (addEndListener) {
+        addEndListener(node, done);
+      } else {
+        node.addEventListener("transitionend", done, { once: true });
+      }
+    };
+  }
+
   return createElement(Transition, rest, (state, phase: Phase) => {
     const { className, class: cls } = children.props;
 
