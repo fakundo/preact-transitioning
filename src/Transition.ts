@@ -118,7 +118,7 @@ export function Transition(props: TransitionProps) {
   // Make transition state
   const transitionState = useMemo(() => {
     const value = {};
-    Object.values(Phase).forEach(val => {
+    Object.keys(EventMapping).forEach(val => {
       value[val] = phase === val;
     });
     return value as TransitionState;
