@@ -125,7 +125,7 @@ export function Transition(props: TransitionProps) {
   }, [phase]);
 
   // Do not render anything
-  if (!alwaysMounted && phase === Phase.EXIT_DONE) {
+  if (!alwaysMounted && (exit ? phase === Phase.EXIT_DONE : !inProp)) {
     return null;
   }
 
