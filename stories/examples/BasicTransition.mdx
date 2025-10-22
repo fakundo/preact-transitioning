@@ -1,0 +1,33 @@
+import { Canvas, Meta, Source } from '@storybook/blocks';
+import * as Stories from './BasicTransition.stories';
+
+<Meta title="Examples/Basic Transition" />
+
+# Basic Transition Example
+
+This example demonstrates how to use the `Transition` component to handle simple transitions. The `Transition` component provides information about its current state, which can be used to apply animations or styles dynamically.
+
+## Usage
+
+Here’s how you can use the `Transition` component in your project:
+
+```tsx
+<Transition in={visible}>
+  {transitionState => <pre>{JSON.stringify(transitionState)}</pre>}
+</Transition>
+```
+
+## Explanation
+
+- `in`: A boolean that determines whether the transition is entering or exiting.
+- `transitionState`: An object that represents the current state of the transition, such as `entering`, `entered`, `exiting`, or `exited`.
+
+## Live Demo
+
+Check out the live demo below to see the `Transition` component in action:
+
+<Canvas of={Stories.Default} />
+
+## Source Code
+
+The source code for this example is available on [GitHub](https://github.com/fakundo/preact-transitioning/blob/main/stories/examples/BasicTransition.stories.tsx).

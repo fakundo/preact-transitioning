@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "root": true,
+  "compilerOptions": {
+    "target": "ES2015",
+    "module": "esnext",
+    "lib": ["dom", "esnext"],
+    "esModuleInterop": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+		"jsxImportSource": "preact",
+    "jsxFactory": "",
+    "jsxFragmentFactory": "",
+  },
+  "include": ["src"]
+}

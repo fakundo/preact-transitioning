@@ -1,0 +1,33 @@
+import { Canvas, Meta, Source } from '@storybook/blocks';
+import * as Stories from './ItemList.stories';
+import sourceCode from '../misc/StyleFadeTransition?raw';
+
+<Meta title="Examples/Transition Group/Item List" />
+
+# Transition Group – Item List Example
+
+This example demonstrates how to use the `TransitionGroup` component with an array of items to manage animations when adding or removing elements.
+
+## Usage
+
+To use the `TransitionGroup` in your project, you can follow the example below:
+
+```tsx
+<TransitionGroup>
+  {items.map((item) => (
+    <FadeTransition key={item.id}>
+      <div>{item.content}</div>
+    </FadeTransition>
+  ))}
+</TransitionGroup>
+```
+
+## Live Demo
+
+Check out the live demo below to see the `TransitionGroup` in action:
+
+<Canvas of={Stories.Default} />
+
+## Source Code
+
+The source code for this example is available on [GitHub](https://github.com/fakundo/preact-transitioning/blob/main/stories/examples/ItemList.stories.tsx).

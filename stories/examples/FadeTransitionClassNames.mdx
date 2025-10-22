@@ -1,0 +1,54 @@
+import { Canvas, Meta, Source } from '@storybook/blocks';
+import * as Stories from './FadeTransitionClassNames.stories';
+import sourceCode from '../misc/CSSFadeTransition?raw';
+import cssSourceCode from '../misc/CSSFadeTransition.css?raw';
+
+<Meta title="Examples/Fade Transition/Class Names" />
+
+# Fade Transition with Class Names
+
+This example demonstrates how to create a fade transition using the `CSSTransition` component with class names for styling.
+
+## Code Example
+
+Example implementation of the `FadeTransition` component:
+
+<Source code={sourceCode} language="tsx" dark />
+
+Contents of the file `CSSFadeTransition.css`:
+
+<Source code={cssSourceCode} language="css" dark />
+
+## Explanation
+
+The example implements a fading transition effect using the `StyleTransition` component. Below are the key points:
+
+1. **CSS Classes for Animation**:
+   - The `classNames` prop defines the base name for the transition classes (e.g., `fade`).
+   - `CSSTransition` automatically appends suffixes like `-enter`, `-enter-active`, `-exit`, and `-exit-active` to match the different transition phases.
+
+2. **Transition Control**:
+   - The `in` prop toggles the visibility of the component and triggers the appropriate CSS animations (e.g., enter/exit).
+
+3. **Reusability**:
+   - By encapsulating logic into a `FadeTransition` component, you can easily reuse fade animations across your project.
+
+## Usage
+
+You can then use the `FadeTransition` component in your project like this:
+
+```tsx
+<FadeTransition in={visible}>
+  <div>Fading element</div>
+</FadeTransition>
+```
+
+## Live Demo
+
+Check out the live demo below to see the `FadeTransition` in action:
+
+<Canvas of={Stories.Default} />
+
+## Source Code
+
+The source code for this example is available on [GitHub](https://github.com/fakundo/preact-transitioning/blob/main/stories/examples/FadeTransitionClassNames.stories.tsx).

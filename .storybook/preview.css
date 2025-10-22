@@ -1,0 +1,31 @@
+html {
+  font-size: 12px;
+}
+#storybook-root, .sb-story {
+  color: #c9cdcf;
+  min-height: 10rem;
+  font-family: monospace;
+}
+button, pre, input {
+  margin: 0;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+}
+hr {
+  margin: 1rem 0;
+  border: 0;
+  border-top: 1px solid #ffffff1a;
+}
+.group {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+label {
+  display: flex;
+  gap: .25rem;
+  align-items: center;
+}

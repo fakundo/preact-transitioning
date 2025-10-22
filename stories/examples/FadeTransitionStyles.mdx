@@ -1,0 +1,49 @@
+import { Canvas, Meta, Source } from '@storybook/blocks';
+import * as Stories from './FadeTransitionStyles.stories';
+import sourceCode from '../misc/StyleFadeTransition?raw';
+
+<Meta title="Examples/Fade Transition/Inline Styles" />
+
+# Fade Transition with Inline Styles
+
+This example demonstrates how to create a fade transition using the `StyleTransition` component with custom inline styles.
+
+## Code Example
+
+Example implementation of the `FadeTransition` component:
+
+<Source code={sourceCode} language="tsx" dark />
+
+## Explanation
+
+The example implements a fading transition effect using the `StyleTransition` component. Below are the key points:
+
+1. **Custom Inline Styles**:
+   - Inline styles are used to define the appearance for different phases of the transition (e.g., enter, exit).
+   - This allows you to avoid external CSS files and keep styles self-contained.
+
+2. **Transition Control**:
+   - The `in` prop determines whether the component is visible or not, triggering the appropriate transition (enter/exit).
+
+3. **Reusability**:
+   - By wrapping the logic inside a reusable `FadeTransition` component, you can easily integrate fade animations across your project.
+
+## Usage
+
+You can then use the `FadeTransition` component in your project like this:
+
+```tsx
+<FadeTransition in={visible}>
+  <div>Fading element</div>
+</FadeTransition>
+```
+
+## Live Demo
+
+Check out the live demo below to see the `FadeTransition` in action:
+
+<Canvas of={Stories.Default} />
+
+## Source Code
+
+The source code for this example is available on [GitHub](https://github.com/fakundo/preact-transitioning/blob/main/stories/examples/FadeTransitionStyles.stories.tsx).

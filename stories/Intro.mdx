@@ -1,0 +1,43 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="Introduction" />
+
+# preact-transitioning
+
+[![npm](https://img.shields.io/npm/v/preact-transitioning.svg)](https://www.npmjs.com/package/preact-transitioning)
+[![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white)](https://github.com/fakundo/preact-transitioning)
+
+A library that provides components for managing animations and transitions with ease. It allows seamless transitions for both individual components and groups of elements. Lightweight and has no dependencies. Inspired by [react-transition-group](https://reactcommunity.org/react-transition-group/) and has almost the same API.
+
+```tsx
+<FadeTransition in={visible}>
+  <div>Fading element</div>
+</FadeTransition>
+```
+
+## Installation
+
+To install `preact-transitioning`, run the following command in your project:
+
+```bash
+npm install preact-transitioning
+# or
+yarn add preact-transitioning
+```
+
+## Usage Examples
+
+- [Basic Transition Component](../?path=/docs/examples-basic-transition--docs): Demonstrates the functionality of a basic transition component.
+- [Fade Transition with Inline Styles](../?path=/docs/examples-fade-transition-inline-styles--docs): Implements a fading transition using inline styles.
+- [Fade Transition with Class Names](../?path=/docs/examples-fade-transition-class-names--docs): Implements a fading transition using CSS class names.
+- [Transition Group: Conditional Render](../?path=/docs/examples-transition-group-conditional-render--docs): Renders children conditionally with animations.
+- [Transition Group: Item List](../?path=/docs/examples-transition-group-item-list--docs): Renders an array of items with animations.
+
+## Components Overview
+
+The library includes the following components to manage transitions and animations:
+
+- [Transition](../?path=/docs/components-transition--docs): Controls the mounting and unmounting of a component with transitions.
+- [StyleTransition](../?path=/docs/components-styletransition--docs): Applies inline styles during the transition phases.
+- [CSSTransition](../?path=/docs/components-csstransition--docs): Adds CSS classes during the transition phases for seamless animations.
+- [TransitionGroup](../?path=/docs/components-transitiongroup--docs): Manages a group of transitioning elements.

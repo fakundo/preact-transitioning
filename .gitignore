@@ -1,5 +1,17 @@
+# Project specific #
+####################
 lib
 docs
+docgen
+*storybook.log
+
+# Yarn #
+########
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
 
 # Node specific #
 #################

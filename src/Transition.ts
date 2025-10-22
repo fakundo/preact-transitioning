@@ -1,7 +1,11 @@
 import { ComponentChildren, createElement } from 'preact';
-import { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'preact/hooks';
+import { useState, useEffect, useRef, useMemo, useLayoutEffect } from 'preact/hooks';
 import { TransitionChild } from './TransitionChild';
 
+/**
+ * Enum representing the different phases of a transition.
+ * Each phase corresponds to a specific stage of the transition lifecycle.
+ */
 export enum Phase {
   APPEAR = 'appear',
   APPEAR_ACTIVE = 'appearActive',
@@ -14,6 +18,9 @@ export enum Phase {
   EXIT_DONE = 'exitDone',
 }
 
+/**
+ * Enum representing event callbacks for various transition phases.
+ */
 export enum PhaseEvent {
   ENTER = 'onEnter',
   ENTERING = 'onEntering',
@@ -23,8 +30,76 @@ export enum PhaseEvent {
   EXITED = 'onExited',
 }
 
-const EventMapping: {
-  [key in Phase]: [PhaseEvent, Phase?, boolean?];
+/**
+ * Type representing the state of each transition phase.
+ * Each phase is associated with a boolean value indicating whether that phase is active.
+ */
+export type TransitionState = {
+  [key in Phase]: boolean;
+};
+
+export type TransitionProps = {
+  /**
+   * Event callbacks for different transition phases.
+   */
+  [key in PhaseEvent]?: (node?: Element | Text) => void;
+} & {
+  /**
+   * If true, the element is shown and transitions through the "appear", "enter", or "exit" phases to the "entered" state.
+   * If false, it transitions through the "exit" phases to the "exited" state.
+   *
+   * @default false
+   */
+  in?: boolean;
+  /**
+   * If true, the transition will run the "appear" phases ("appear", "appearActive", "appearDone") when the component is first mounted.
+   *
+   * @default false
+   */
+  appear?: boolean;
+  /**
+   * If true, enables the "enter" phases ("enter", "enterActive", "enterDone") when the component enters.
+   *
+   * @default true
+   */
+  enter?: boolean;
+  /**
+   * If true, enables the "exit" phases ("exit", "exitActive", "exitDone") when the component leaves.
+   *
+   * @default true
+   */
+  exit?: boolean;
+  /**
+   * Duration of the transition in milliseconds. Can be used to override default durations for the phases.
+   *
+   * @default DEFAULT_TRANSITION_DURATION=500
+   */
+  duration?: number;
+  /**
+   * If true, the component remains mounted in the DOM even when it transitions to the "exited" state.
+   *
+   * @default false
+   */
+  alwaysMounted?: boolean;
+  /**
+   * A function called to manually handle the end of a transition phase.
+   *
+   * @param node - The transitioning element.
+   * @param done - A callback function to signal that the phase is complete.
+   */
+  addEndListener?: (node: Element | Text, done: () => void) => void;
+  /**
+   * A render function that provides the current transition state and active phase.
+   *
+   * @param transitionState - The current state of the transition, indicating which phase is active.
+   * @param activePhase - The phase currently in progress (e.g., "appearActive", "enterDone").
+   * @returns Element to render.
+   */
+  children: (transitionState: TransitionState, activePhase: Phase) => ComponentChildren;
+};
+
+const EVENT_MAP: {
+  [key in Phase]: [eventName: PhaseEvent, nextPhase?: Phase, delay?: boolean];
 } = {
   [Phase.APPEAR]: [PhaseEvent.ENTER, Phase.APPEAR_ACTIVE],
   [Phase.APPEAR_ACTIVE]: [PhaseEvent.ENTERING, Phase.APPEAR_DONE, true],
@@ -37,23 +112,14 @@ const EventMapping: {
   [Phase.EXIT_DONE]: [PhaseEvent.EXITED],
 };
 
-export type TransitionState = {
-  [key in Phase]: boolean;
-};
+export const DEFAULT_TRANSITION_DURATION = 500;
 
-export type TransitionProps = {
-  [key in PhaseEvent]?: (node?: Element | Text) => void;
-} & {
-  in?: boolean;
-  appear?: boolean;
-  enter?: boolean;
-  exit?: boolean;
-  duration?: number;
-  alwaysMounted?: boolean;
-  addEndListener?: (node: Element | Text, done: () => void) => void;
-  children: (transitionState: TransitionState, activePhase: Phase) => ComponentChildren;
-};
-
+/**
+ * The `Transition` component handles the animation lifecycle of a component as it enters and exits
+ * the DOM. The component can manage transitions for different phases: "appear", "enter",
+ * and "exit", with each phase having an active state and a done state. These phases can be triggered and
+ * customized based on the visibility of the component (controlled by the `in` prop).
+ */
 export function Transition(props: TransitionProps) {
   const {
     children,
@@ -61,68 +127,70 @@ export function Transition(props: TransitionProps) {
     appear = false,
     enter = true,
     exit = true,
-    duration = 500,
+    duration = DEFAULT_TRANSITION_DURATION,
     alwaysMounted = false,
     addEndListener,
   } = props;
 
-  const nodeRef = useRef<Element | Text>();
-  const tmRef = useRef<number>();
-  let ignoreInPropChange = false;
+  const nodeRef = useRef<Element | Text>(null!);
 
-  // Make state
+  // Make phase state
   const [phase, setPhase] = useState(() => {
-    ignoreInPropChange = true;
-    if (!inProp) {
-      return Phase.EXIT_DONE;
+    switch (true) {
+      case !inProp:
+        return Phase.EXIT_DONE;
+      case !!appear:
+        return Phase.APPEAR;
+      default:
+        return Phase.APPEAR_DONE;
     }
-    if (appear) {
-      return Phase.APPEAR;
-    }
-    return Phase.APPEAR_DONE;
   });
 
   // Effect for phase change
   useEffect(() => {
     const { setTimeout, clearTimeout } = window;
-    const [eventName, nextPhase, delay] = EventMapping[phase];
+    const [eventName, nextPhase, delay] = EVENT_MAP[phase];
     const { [eventName]: event } = props;
     event?.(nodeRef.current);
+    let tm = 0;
+    let af = 0;
     if (nextPhase) {
       if (delay) {
         if (addEndListener) {
           addEndListener(nodeRef.current, () => setPhase(nextPhase));
         } else {
-          tmRef.current = setTimeout(setPhase, duration, nextPhase);
+          tm = setTimeout(setPhase, duration, nextPhase);
         }
       } else {
-        setPhase(nextPhase);
+        af = requestAnimationFrame(() => setPhase(nextPhase));
       }
     }
     return () => {
-      clearTimeout(tmRef.current);
+      clearTimeout(tm);
+      cancelAnimationFrame(af);
     };
   }, [phase, duration]);
 
-  // Effect for initial phase
+  // Effect for handling `in` prop changes
   useLayoutEffect(() => {
-    if (!ignoreInPropChange) {
-      if (inProp) {
-        setPhase(enter ? Phase.ENTER : Phase.ENTER_DONE);
-      } else {
-        setPhase(exit ? Phase.EXIT : Phase.EXIT_DONE);
-      }
+    const isExitPhase = [Phase.EXIT, Phase.EXIT_ACTIVE, Phase.EXIT_DONE].includes(phase);
+    if (inProp && isExitPhase) {
+      setPhase(enter ? Phase.ENTER : Phase.ENTER_DONE);
+    }
+    if (!inProp && !isExitPhase) {
+      setPhase(exit ? Phase.EXIT : Phase.EXIT_DONE);
     }
   }, [inProp]);
 
   // Make transition state
-  const transitionState = useMemo(() => {
-    const value = {};
-    Object.keys(EventMapping).forEach(val => {
-      value[val] = phase === val;
-    });
-    return value as TransitionState;
-  }, [phase]);
+  const transitionState = useMemo(
+    () =>
+      Object.keys(EVENT_MAP).reduce(
+        (acc, phaseI) => ({ ...acc, [phaseI]: phase === phaseI }),
+        {} as TransitionState,
+      ),
+    [phase],
+  );
 
   // Do not render anything
   if (!alwaysMounted && (exit ? phase === Phase.EXIT_DONE : !inProp)) {
@@ -130,5 +198,8 @@ export function Transition(props: TransitionProps) {
   }
 
   // Render children
-  return createElement(TransitionChild, { nodeRef, children: children(transitionState, phase) });
+  return createElement(TransitionChild, {
+    nodeRef,
+    children: typeof children === 'function' ? children(transitionState, phase) : children,
+  });
 }

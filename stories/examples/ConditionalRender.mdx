@@ -1,0 +1,43 @@
+import { Canvas, Meta, Source } from '@storybook/blocks';
+import * as Stories from './ConditionalRender.stories';
+
+<Meta title="Examples/Transition Group/Conditional Render" />
+
+# Transition Group – Conditional Render Example
+
+This example demonstrates how to use the `TransitionGroup` component with conditionally rendered children. By leveraging `TransitionGroup`, you can easily handle animations for elements that are dynamically added or removed based on conditions.
+
+## Usage
+
+To use the `TransitionGroup` with conditionally rendered children in your project, follow the example below:
+
+```tsx
+<TransitionGroup>
+  {shouldRenderFirstElement && (
+    <FadeTransition key="1">
+      <div>First element</div>
+    </FadeTransition>
+  )}
+  {shouldRenderSecondElement && (
+    <FadeTransition key="2">
+      <div>Second element</div>
+    </FadeTransition>
+  )}
+</TransitionGroup>
+```
+
+## Explanation
+
+- **`shouldRenderFirstElement` and `shouldRenderSecondElement`**: These are boolean conditions controlling whether specific elements should appear or disappear.
+- **`FadeTransition`**: Wraps each child with animations for entering and exiting phases.
+- **`TransitionGroup`**: Handles the mounting and unmounting of its children with smooth transitions.
+
+## Live Demo
+
+Check out the live demo below to see the `TransitionGroup` in action with conditionally rendered children:
+
+<Canvas of={Stories.Default} />
+
+## Source Code
+
+The source code for this example is available on [GitHub](https://github.com/fakundo/preact-transitioning/blob/main/stories/examples/ConditionalRender.stories.tsx).

@@ -1,11 +1,11 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.build.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "preact",
-    "jsxFactory": "",
-    "jsxFragmentFactory": "",
+    "baseUrl": ".",
     "paths": {
-      "preact-transitioning": ["./lib/types"]
+      "preact-transitioning": ["./src"]
     }
-  }
+  },
+  "include": ["src", "stories", "scripts", ".storybook"]
 }
