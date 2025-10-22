@@ -1,0 +1,8 @@
+import"./index-LEj95BT6.js";import{u as o}from"./jsxRuntime.module-CFb5ymYX.js";import{useMDXComponents as i}from"./index-DsvevKGP.js";import{M as r,C as a}from"./index-B2e_H_qW.js";import{Default as c}from"./Counter.stories-D0rkJYEj.js";import{k as m}from"./preact.module-CLNnjL5T.js";import"./hooks.module-Bqmbac_-.js";import"./iframe-BMxGqmmI.js";import"./index-DrFu-skq.js";import"./CSSTransition-D2FYEyZ0.js";import"./TransitionGroup-BnkI5oRw.js";import"./StyleFadeTransition-AHBQhhvc.js";import"./StyleTransition-ktvKYcXb.js";function n(t){const e={a:"a",code:"code",h1:"h1",h2:"h2",p:"p",...i(),...t.components};return o(m,{children:[o(r,{title:"Examples/Transition Group/Basic Counter"}),`
+`,o(e.h1,{id:"transition-group--counter-example",children:"Transition Group – Counter Example"}),`
+`,o(e.p,{children:["This example demonstrates how to use the ",o(e.code,{children:"TransitionGroup"})," component to animate a counter as it updates. Each change in the counter triggers a smooth transition."]}),`
+`,o(e.h2,{id:"live-demo",children:"Live Demo"}),`
+`,o(e.p,{children:["Check out the live demo below to see the ",o(e.code,{children:"TransitionGroup"})," in action:"]}),`
+`,o(a,{of:c}),`
+`,o(e.h2,{id:"source-code",children:"Source Code"}),`
+`,o(e.p,{children:["The source code for this example is available on ",o(e.a,{href:"https://github.com/fakundo/preact-transitioning/blob/main/stories/examples/Counter.stories.tsx",rel:"nofollow",children:"GitHub"}),"."]})]})}function v(t={}){const{wrapper:e}={...i(),...t.components};return e?o(e,{...t,children:o(n,{...t})}):n(t)}export{v as default};
