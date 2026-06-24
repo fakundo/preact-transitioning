@@ -19,6 +19,9 @@
     "prepare": "husky",
     "prepublishOnly": "yarn run lint && yarn run build",
     "lint": "eslint src && eslint stories && eslint scripts",
+    "typecheck": "tsc --noEmit -p tsconfig.build.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "clean": "rimraf lib",
     "compile": "microbundle --no-sourcemap --tsconfig tsconfig.build.json",
     "build": "yarn run clean && yarn run compile",
@@ -54,6 +57,7 @@
     "@storybook/preact-vite": "^8.6.14",
     "@storybook/test": "^8.6.14",
     "@storybook/theming": "^8.6.14",
+    "@testing-library/preact": "^3.2.4",
     "@typescript-eslint/eslint-plugin": "^7.5.0",
     "@typescript-eslint/parser": "^7.5.0",
     "eslint": "^8.57.0",
@@ -67,6 +71,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-storybook": "^0.11.2",
     "husky": "^9.1.7",
+    "jsdom": "^29.1.1",
     "microbundle": "^0.15.1",
     "preact": "^10.27.2",
     "prettier": "^3.6.2",
@@ -75,7 +80,8 @@
     "storybook": "^8.6.14",
     "typescript": "5.5.4",
     "vite": "^7.1.10",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^4.1.9"
   },
   "peerDependencies": {
     "preact": ">=10.0.0"

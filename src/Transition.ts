@@ -127,12 +127,13 @@ export function Transition(props: TransitionProps) {
     appear = false,
     enter = true,
     exit = true,
-    duration = DEFAULT_TRANSITION_DURATION,
     alwaysMounted = false,
-    addEndListener,
   } = props;
 
   const nodeRef = useRef<Element | Text>(null!);
+  const destroyedRef = useRef(false);
+  const propsRef = useRef(props);
+  propsRef.current = props;
 
   // Make phase state
   const [phase, setPhase] = useState(() => {
@@ -148,16 +149,21 @@ export function Transition(props: TransitionProps) {
 
   // Effect for phase change
   useEffect(() => {
+    destroyedRef.current = false;
     const { setTimeout, clearTimeout } = window;
     const [eventName, nextPhase, delay] = EVENT_MAP[phase];
-    const { [eventName]: event } = props;
+    const { [eventName]: event, addEndListener, duration = DEFAULT_TRANSITION_DURATION } = propsRef.current;
     event?.(nodeRef.current);
     let tm = 0;
     let af = 0;
     if (nextPhase) {
       if (delay) {
         if (addEndListener) {
-          addEndListener(nodeRef.current, () => setPhase(nextPhase));
+          addEndListener(nodeRef.current, () => {
+            if (!destroyedRef.current) {
+              setPhase(nextPhase);
+            }
+          });
         } else {
           tm = setTimeout(setPhase, duration, nextPhase);
         }
@@ -166,10 +172,11 @@ export function Transition(props: TransitionProps) {
       }
     }
     return () => {
+      destroyedRef.current = true;
       clearTimeout(tm);
       cancelAnimationFrame(af);
     };
-  }, [phase, duration]);
+  }, [phase]);
 
   // Effect for handling `in` prop changes
   useLayoutEffect(() => {
