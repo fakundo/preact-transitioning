@@ -1,4 +1,4 @@
-import"./index-LEj95BT6.js";import{u as n}from"./jsxRuntime.module-CFb5ymYX.js";import{useMDXComponents as a}from"./index-DsvevKGP.js";import{M as r,S as o,C as s}from"./index-B2e_H_qW.js";import{Default as c}from"./FadeTransitionClassNames.stories-CL3fq_yS.js";import{k as d}from"./preact.module-CLNnjL5T.js";import"./hooks.module-Bqmbac_-.js";import"./iframe-BMxGqmmI.js";import"./index-DrFu-skq.js";import"./CSSTransition-D2FYEyZ0.js";const l=`import { CSSTransition, CSSTransitionProps } from 'preact-transitioning';
+import"./index-LEj95BT6.js";import{u as n}from"./jsxRuntime.module-CFb5ymYX.js";import{useMDXComponents as a}from"./index-DsvevKGP.js";import{M as r,S as o,C as s}from"./index-Di39pTIM.js";import{Default as c}from"./FadeTransitionClassNames.stories-DizBHlYT.js";import{k as d}from"./preact.module-CLNnjL5T.js";import"./hooks.module-Bqmbac_-.js";import"./iframe-DNAYbGTO.js";import"./index-DrFu-skq.js";import"./CSSTransition-Dc13Bty9.js";const l=`import { CSSTransition, CSSTransitionProps } from 'preact-transitioning';
 import './CSSFadeTransition.css';
 
 export type FadeTransitionProps = Omit<CSSTransitionProps, 'classNames'>;
@@ -39,7 +39,7 @@ export function FadeTransition(props: FadeTransitionProps) {
 `,n(e.p,{children:["Contents of the file ",n(e.code,{children:"CSSFadeTransition.css"}),":"]}),`
 `,n(o,{code:h,language:"css",dark:!0}),`
 `,n(e.h2,{id:"explanation",children:"Explanation"}),`
-`,n(e.p,{children:["The example implements a fading transition effect using the ",n(e.code,{children:"StyleTransition"})," component. Below are the key points:"]}),`
+`,n(e.p,{children:["The example implements a fading transition effect using the ",n(e.code,{children:"CSSTransition"})," component. Below are the key points:"]}),`
 `,n(e.ol,{children:[`
 `,n(e.li,{children:[`
 `,n(e.p,{children:[n(e.strong,{children:"CSS Classes for Animation"}),":"]}),`
